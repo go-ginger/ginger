@@ -6,6 +6,7 @@ import (
 )
 
 type IController interface {
+	Init()
 	get(ctx *gin.Context)
 }
 
@@ -61,6 +62,7 @@ type BaseItemsController struct {
 }
 
 func (c *BaseItemsController) RegisterRoutes(controller IBaseItemsController, path string, router *RouterGroup) {
+	controller.Init()
 	c.Controller = controller
 	router.RegisterRoutes(controller, path, router.RouterGroup)
 }
@@ -95,6 +97,7 @@ type BaseItemController struct {
 }
 
 func (c *BaseItemController) RegisterRoutes(controller IBaseItemController, path string, router *RouterGroup) {
+	controller.Init()
 	c.Controller = controller
 	router.RegisterRoutes(controller, path, router.RouterGroup)
 }
