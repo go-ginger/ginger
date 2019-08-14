@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/kulichak/ginger/helpers"
+	"github.com/kulichak/models"
 	"strings"
 )
-
 
 func GetQueryFilters(ctx *gin.Context) map[string]interface{} {
 	filters := ctx.Query("filters")
@@ -18,20 +18,20 @@ func GetQueryFilters(ctx *gin.Context) map[string]interface{} {
 	return filter
 }
 
-func GetSortFields(ctx *gin.Context) []SortItem {
+func GetSortFields(ctx *gin.Context) []models.SortItem {
 	sort := ctx.Query("sort")
 	if sort == "" {
 		sort = "-_score"
 	}
 	sorts := strings.Split(sort, ",")
-	result := make([]SortItem, 0)
+	result := make([]models.SortItem, 0)
 	for _, sort := range sorts {
 		asc := true
 		if strings.HasPrefix(sort, "-") {
 			asc = false
 			sort = sort[1:]
 		}
-		result = append(result, SortItem{
+		result = append(result, models.SortItem{
 			Name:      sort,
 			Ascending: asc,
 		})

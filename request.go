@@ -2,52 +2,49 @@ package ginger
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kulichak/models"
 	"strconv"
 )
 
 type Request struct {
-	Context *gin.Context
-	Params  *gin.Params
-	Fields  *[]string
-	Filters *map[string]interface{}
-	Sort    *[]SortItem
-	Page    *int
-	PerPage *int
+	models.Request
 }
 
 func NewRequest(ctx *gin.Context) *Request {
 	filtersFace, exists := ctx.Get("filters")
-	var filters map[string]interface{}
+	var filters models.Filters
 	if exists {
 		filters = filtersFace.(map[string]interface{})
 	}
 	sortFace, exists := ctx.Get("sort")
-	var sort []SortItem
+	var sort []models.SortItem
 	if exists {
-		sort = sortFace.([]SortItem)
+		sort = sortFace.([]models.SortItem)
 	}
 	fieldsFace, exists := ctx.Get("fields")
-	var fields []string
+	var fields models.Fields
 	if exists {
 		fields = fieldsFace.([]string)
 	}
 	pageFace, exists := ctx.Get("page")
-	var page int
+	var page uint64
 	if exists {
-		page, _ = strconv.Atoi(pageFace.(string))
+		page, _ = strconv.ParseUint(pageFace.(string), 10, 32)
 	}
 	perPageFace, exists := ctx.Get("per_page")
-	var perPage int
+	var perPage uint64
 	if exists {
-		perPage, _ = strconv.Atoi(perPageFace.(string))
+		perPage, _ = strconv.ParseUint(perPageFace.(string), 10, 32)
 	}
 	return &Request{
-		Context: ctx,
-		Params:  &ctx.Params,
-		Filters: &filters,
-		Sort:    &sort,
-		Fields:  &fields,
-		Page:    &page,
-		PerPage: &perPage,
+		Request: models.Request{
+			Context: ctx,
+			Params:  &ctx.Params,
+			Filters: &filters,
+			Sort:    &sort,
+			Fields:  &fields,
+			Page:    &page,
+			PerPage: &perPage,
+		},
 	}
 }

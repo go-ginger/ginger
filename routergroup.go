@@ -12,7 +12,7 @@ type RouterGroup struct {
 }
 
 func (group *RouterGroup) Group(relativePath string) *RouterGroup {
-	return &RouterGroup {
+	return &RouterGroup{
 		RouterGroup: group.engine.Group(relativePath),
 	}
 }

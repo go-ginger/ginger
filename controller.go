@@ -2,6 +2,7 @@ package ginger
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kulichak/logic"
 )
 
 type IController interface {
@@ -10,6 +11,19 @@ type IController interface {
 
 type BaseController struct {
 	IController
+
+	LogicHandler logic.IBaseLogicHandler
+}
+
+func (c *BaseController) HandleError(request *Request, result interface{}, err error) (handled bool) {
+	if err != nil {
+		request.Context.JSON(400, err)
+		return true
+	} else if result == nil {
+		request.Context.JSON(404, result)
+		return true
+	}
+	return false
 }
 
 func (c *BaseController) handleFilters(ctx *gin.Context) {
@@ -49,6 +63,14 @@ type BaseItemsController struct {
 func (c *BaseItemsController) RegisterRoutes(controller IBaseItemsController, path string, router *RouterGroup) {
 	c.Controller = controller
 	router.RegisterRoutes(controller, path, router.RouterGroup)
+}
+
+func (c *BaseItemsController) Get(request *Request) {
+	result, err := c.LogicHandler.Paginate(&request.Request.IRequest)
+	if c.HandleError(request, result, err) {
+		return
+	}
+	request.Context.JSON(200, result)
 }
 
 func (c *BaseItemsController) get(ctx *gin.Context) {

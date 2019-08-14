@@ -11,13 +11,13 @@ type Router struct {
 	Address []string
 }
 
-func NewRouter() *Router  {
+func NewRouter() *Router {
 	router := new(Router)
 	router.Engine = gin.Default()
 	router.RouterGroup.engine = router.Engine
 	return router
 }
 
-func(router Router) Run() (err error) {
+func (router Router) Run() (err error) {
 	return router.Engine.Run(router.Address...)
 }
