@@ -1,4 +1,4 @@
-package gin_extended
+package ginger
 
 type SortItem struct {
 	Name      string

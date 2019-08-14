@@ -1,4 +1,4 @@
-package gin_extended
+package ginger
 
 import (
 	"github.com/gin-gonic/gin"
