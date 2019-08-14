@@ -4,12 +4,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ControllerFace interface {
+type IController interface {
 	get(ctx *gin.Context)
 }
 
 type BaseController struct {
-	ControllerFace
+	IController
 }
 
 func (c *BaseController) handleFilters(ctx *gin.Context) {
@@ -32,21 +32,21 @@ func (c *BaseController) get(ctx *gin.Context) {
 }
 
 // items
-type BaseItemsControllerFace interface {
-	ControllerFace
+type IBaseItemsController interface {
+	IController
 
 	Get(request *Request)
 }
 
 // items controller
 type BaseItemsController struct {
-	BaseItemsControllerFace
+	IBaseItemsController
 	BaseController
 
-	Controller BaseItemsControllerFace
+	Controller IBaseItemsController
 }
 
-func (c *BaseItemsController) RegisterRoutes(controller BaseItemsControllerFace, path string, router *RouterGroup) {
+func (c *BaseItemsController) RegisterRoutes(controller IBaseItemsController, path string, router *RouterGroup) {
 	c.Controller = controller
 	router.RegisterRoutes(controller, path, router.RouterGroup)
 }
@@ -58,21 +58,21 @@ func (c *BaseItemsController) get(ctx *gin.Context) {
 }
 
 // item
-type BaseItemControllerFace interface {
-	ControllerFace
+type IBaseItemController interface {
+	IController
 
 	Get(request *Request)
 }
 
 // item controller
 type BaseItemController struct {
-	BaseItemControllerFace
+	IBaseItemController
 	BaseController
 
-	Controller BaseItemControllerFace
+	Controller IBaseItemController
 }
 
-func (c *BaseItemController) RegisterRoutes(controller BaseItemControllerFace, path string, router *RouterGroup) {
+func (c *BaseItemController) RegisterRoutes(controller IBaseItemController, path string, router *RouterGroup) {
 	c.Controller = controller
 	router.RegisterRoutes(controller, path, router.RouterGroup)
 }
