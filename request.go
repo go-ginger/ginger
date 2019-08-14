@@ -21,12 +21,12 @@ func NewRequest(ctx *gin.Context) *Request {
 	if exists {
 		filters = filtersFace.(map[string]interface{})
 	}
-	sortFace, _ := ctx.Get("sort")
+	sortFace, exists := ctx.Get("sort")
 	var sort []SortItem
 	if exists {
 		sort = sortFace.([]SortItem)
 	}
-	fieldsFace, _ := ctx.Get("fields")
+	fieldsFace, exists := ctx.Get("fields")
 	var fields []string
 	if exists {
 		fields = fieldsFace.([]string)
