@@ -2,6 +2,7 @@ package ginger
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kulichak/models"
 )
 
 // items
@@ -26,7 +27,7 @@ func (c *BaseItemsController) RegisterRoutes(controller IBaseItemsController, pa
 	router.RegisterRoutes(controller, path, router.RouterGroup)
 }
 
-func (c *BaseItemsController) Post(request *Request) {
+func (c *BaseItemsController) Post(request *models.Request) {
 	result, err := c.LogicHandler.Create(request)
 	if c.HandleError(request, result, err) {
 		return
@@ -34,7 +35,7 @@ func (c *BaseItemsController) Post(request *Request) {
 	request.Context.JSON(200, result)
 }
 
-func (c *BaseItemsController) Get(request *Request) {
+func (c *BaseItemsController) Get(request *models.Request) {
 	result, err := c.LogicHandler.Paginate(request)
 	if c.HandleError(request, result, err) {
 		return

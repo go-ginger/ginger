@@ -7,17 +7,13 @@ import (
 	"strconv"
 )
 
-type Request struct {
-	models.Request
-}
-
 var methodsWithBody []string
 
 func init() {
 	methodsWithBody = []string{"POST", "PUT"}
 }
 
-func NewRequest(ctx *gin.Context) *Request {
+func NewRequest(ctx *gin.Context) *models.Request {
 	filtersFace, exists := ctx.Get("filters")
 	var filters models.Filters
 	if exists {
@@ -43,17 +39,15 @@ func NewRequest(ctx *gin.Context) *Request {
 	if exists {
 		perPage, _ = strconv.ParseUint(perPageFace.(string), 10, 32)
 	}
-	request := &Request{
-		Request: models.Request{
-			Context: ctx,
-			Params:  &ctx.Params,
-			ID:      ctx.Params.ByName("id"),
-			Filters: &filters,
-			Sort:    &sort,
-			Fields:  &fields,
-			Page:    &page,
-			PerPage: &perPage,
-		},
+	request := &models.Request{
+		Context: ctx,
+		Params:  &ctx.Params,
+		ID:      ctx.Params.ByName("id"),
+		Filters: &filters,
+		Sort:    &sort,
+		Fields:  &fields,
+		Page:    &page,
+		PerPage: &perPage,
 	}
 	if helpers.Contains(methodsWithBody, ctx.Request.Method) {
 		ctx.BindJSON(request.Body)

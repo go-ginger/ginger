@@ -3,15 +3,16 @@ package ginger
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/kulichak/logic"
+	"github.com/kulichak/models"
 )
 
 type IController interface {
 	Init()
 	get(ctx *gin.Context)
-	Post(request *Request)
-	Get(request *Request)
-	Put(request *Request)
-	Delete(request *Request)
+	Post(request *models.Request)
+	Get(request *models.Request)
+	Put(request *models.Request)
+	Delete(request *models.Request)
 }
 
 type BaseController struct {
@@ -23,7 +24,7 @@ type BaseController struct {
 func (c *BaseController) Init() {
 }
 
-func (c *BaseController) HandleError(request *Request, result interface{}, err error) (handled bool) {
+func (c *BaseController) HandleError(request *models.Request, result interface{}, err error) (handled bool) {
 	if err != nil {
 		request.Context.JSON(400, err)
 		return true
