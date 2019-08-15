@@ -16,6 +16,9 @@ type BaseController struct {
 	LogicHandler logic.IBaseLogicHandler
 }
 
+func (c *BaseController) Init() {
+}
+
 func (c *BaseController) HandleError(request *Request, result interface{}, err error) (handled bool) {
 	if err != nil {
 		request.Context.JSON(400, err)
@@ -61,8 +64,11 @@ type BaseItemsController struct {
 	Controller IBaseItemsController
 }
 
+
+func (c *BaseItemsController) Init() {
+}
+
 func (c *BaseItemsController) RegisterRoutes(controller IBaseItemsController, path string, router *RouterGroup) {
-	controller.Init()
 	c.Controller = controller
 	router.RegisterRoutes(controller, path, router.RouterGroup)
 }
@@ -96,8 +102,11 @@ type BaseItemController struct {
 	Controller IBaseItemController
 }
 
+
+func (c *BaseItemController) Init() {
+}
+
 func (c *BaseItemController) RegisterRoutes(controller IBaseItemController, path string, router *RouterGroup) {
-	controller.Init()
 	c.Controller = controller
 	router.RegisterRoutes(controller, path, router.RouterGroup)
 }
