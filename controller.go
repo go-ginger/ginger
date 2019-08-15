@@ -2,12 +2,12 @@ package ginger
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kulichak/dl"
 	"github.com/kulichak/logic"
 	"github.com/kulichak/models"
 )
 
 type IController interface {
-	Init()
 	get(ctx *gin.Context)
 	Post(request *models.Request)
 	Get(request *models.Request)
@@ -21,7 +21,9 @@ type BaseController struct {
 	LogicHandler logic.IBaseLogicHandler
 }
 
-func (c *BaseController) Init() {
+func (c *BaseController) Init(logicHandler logic.IBaseLogicHandler, dbHandler dl.IBaseDbHandler) {
+	c.LogicHandler = logicHandler
+	c.LogicHandler.Init(dbHandler)
 }
 
 func (c *BaseController) HandleError(request *models.Request, result interface{}, err error) (handled bool) {

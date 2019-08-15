@@ -18,7 +18,6 @@ func (group *RouterGroup) Group(relativePath string) *RouterGroup {
 }
 
 func (group *RouterGroup) RegisterRoutes(controller IController, path string, router *gin.RouterGroup) {
-	controller.Init()
 	routes := map[string]gin.HandlerFunc{
 		"Get": controller.get,
 	}

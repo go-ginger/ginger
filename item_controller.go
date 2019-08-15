@@ -15,10 +15,6 @@ type BaseItemController struct {
 	Controller IBaseItemController
 }
 
-
-func (c *BaseItemController) Init() {
-}
-
 func (c *BaseItemController) RegisterRoutes(controller IBaseItemController, path string, router *RouterGroup) {
 	c.Controller = controller
 	router.RegisterRoutes(controller, path, router.RouterGroup)
