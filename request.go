@@ -2,12 +2,19 @@ package ginger
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kulichak/ginger/helpers"
 	"github.com/kulichak/models"
 	"strconv"
 )
 
 type Request struct {
 	models.Request
+}
+
+var methodsWithBody []string
+
+func init() {
+	methodsWithBody = []string{"POST", "PUT"}
 }
 
 func NewRequest(ctx *gin.Context) *Request {
@@ -36,10 +43,11 @@ func NewRequest(ctx *gin.Context) *Request {
 	if exists {
 		perPage, _ = strconv.ParseUint(perPageFace.(string), 10, 32)
 	}
-	return &Request{
+	request := &Request{
 		Request: models.Request{
 			Context: ctx,
 			Params:  &ctx.Params,
+			ID:      ctx.Params.ByName("id"),
 			Filters: &filters,
 			Sort:    &sort,
 			Fields:  &fields,
@@ -47,4 +55,8 @@ func NewRequest(ctx *gin.Context) *Request {
 			PerPage: &perPage,
 		},
 	}
+	if helpers.Contains(methodsWithBody, ctx.Request.Method) {
+		ctx.BindJSON(request.Body)
+	}
+	return request
 }
