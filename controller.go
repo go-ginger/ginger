@@ -42,9 +42,15 @@ func (c *BaseController) handleFilters(ctx *gin.Context) {
 }
 
 func (c *BaseController) handlePagination(ctx *gin.Context) {
-	ctx.Set("sort", GetSortFields(ctx))
-	ctx.Set("page", ctx.Query("page"))
-	ctx.Set("per_page", ctx.Query("per_page"))
+	if _, ok := ctx.GetQuery("sort"); ok {
+		ctx.Set("sort", GetSortFields(ctx))
+	}
+	queries := []string{"page", "per_page"}
+	for _, query := range queries {
+		if q, ok := ctx.GetQuery(query); ok {
+			ctx.Set(query, q)
+		}
+	}
 }
 
 func (c *BaseController) handleFields(ctx *gin.Context) {

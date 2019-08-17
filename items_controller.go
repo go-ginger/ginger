@@ -36,7 +36,7 @@ func (c *BaseItemsController) Get(request *models.Request) {
 	if c.HandleError(request, result, err) {
 		return
 	}
-	result.Items = result.ReflectItems.Interface()
+	//result.Items = result.ReflectItems.Interface()
 	request.Context.JSON(200, result)
 }
 

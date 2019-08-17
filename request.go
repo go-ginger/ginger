@@ -34,10 +34,16 @@ func NewRequest(ctx *gin.Context) *models.Request {
 	if exists {
 		page, _ = strconv.ParseUint(pageFace.(string), 10, 32)
 	}
+	if page <= 0 {
+		page = 1
+	}
 	perPageFace, exists := ctx.Get("per_page")
 	var perPage uint64
 	if exists {
 		perPage, _ = strconv.ParseUint(perPageFace.(string), 10, 32)
+	}
+	if perPage <= 0 {
+		perPage = 30
 	}
 	request := &models.Request{
 		Context: ctx,
@@ -46,8 +52,8 @@ func NewRequest(ctx *gin.Context) *models.Request {
 		Filters: &filters,
 		Sort:    &sort,
 		Fields:  &fields,
-		Page:    &page,
-		PerPage: &perPage,
+		Page:    page,
+		PerPage: perPage,
 	}
 	if helpers.Contains(methodsWithBody, ctx.Request.Method) {
 		ctx.BindJSON(request.Body)

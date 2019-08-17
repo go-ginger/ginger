@@ -13,7 +13,7 @@ func GetQueryFilters(ctx *gin.Context) map[string]interface{} {
 	var filter map[string]interface{}
 	if filters != "" {
 		filter = map[string]interface{}{}
-		json.Unmarshal([]byte(filters), filter)
+		json.Unmarshal([]byte(filters), &filter)
 	}
 	return filter
 }
