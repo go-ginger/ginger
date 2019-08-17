@@ -5,12 +5,10 @@ import (
 	"github.com/kulichak/models"
 )
 
-// items
 type IBaseItemsController interface {
 	IController
 }
 
-// items controller
 type BaseItemsController struct {
 	IBaseItemsController
 	BaseController
@@ -29,6 +27,11 @@ func (c *BaseItemsController) Post(request *models.Request) {
 		return
 	}
 	request.Context.JSON(200, result)
+}
+
+func (c *BaseItemsController) post(ctx *gin.Context) {
+	c.BaseController.post(ctx)
+	c.Controller.Post(NewRequest(ctx))
 }
 
 func (c *BaseItemsController) Get(request *models.Request) {

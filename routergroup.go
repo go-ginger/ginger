@@ -19,7 +19,8 @@ func (group *RouterGroup) Group(relativePath string) *RouterGroup {
 
 func (group *RouterGroup) RegisterRoutes(controller IController, path string, router *gin.RouterGroup) {
 	routes := map[string]gin.HandlerFunc{
-		"Get": controller.get,
+		"Get":  controller.get,
+		"Post": controller.post,
 	}
 	for method, handler := range routes {
 		f := helpers.ReflectMethod(controller, method)

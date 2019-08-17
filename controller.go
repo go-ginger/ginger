@@ -9,6 +9,8 @@ import (
 
 type IController interface {
 	get(ctx *gin.Context)
+	post(ctx *gin.Context)
+
 	Post(request *models.Request)
 	Get(request *models.Request)
 	Put(request *models.Request)
@@ -60,4 +62,7 @@ func (c *BaseController) handleFields(ctx *gin.Context) {
 func (c *BaseController) get(ctx *gin.Context) {
 	c.handleFields(ctx)
 	c.handleFilters(ctx)
+}
+
+func (c *BaseController) post(ctx *gin.Context) {
 }
