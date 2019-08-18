@@ -9,9 +9,10 @@ import (
 
 type IController interface {
 	GetRoutes() []BaseControllerRoute
-	
-	get(ctx *gin.Context)
+
 	post(ctx *gin.Context)
+	get(ctx *gin.Context)
+	put(ctx *gin.Context)
 
 	Post(request *models.Request)
 	Get(request *models.Request)
@@ -47,6 +48,14 @@ func (c *BaseController) GetRoutes() []BaseControllerRoute {
 	return c.Routes
 }
 
+func (c *BaseController) HandleErrorNoResult(request *models.Request, err error) (handled bool) {
+	if err != nil {
+		request.Context.JSON(400, err)
+		return true
+	}
+	return false
+}
+
 func (c *BaseController) HandleError(request *models.Request, result interface{}, err error) (handled bool) {
 	if err != nil {
 		request.Context.JSON(400, err)
@@ -78,10 +87,13 @@ func (c *BaseController) handleFields(ctx *gin.Context) {
 	ctx.Set("fields", GetFetchFields(ctx, nil))
 }
 
+func (c *BaseController) post(ctx *gin.Context) {
+}
+
 func (c *BaseController) get(ctx *gin.Context) {
 	c.handleFields(ctx)
 	c.handleFilters(ctx)
 }
 
-func (c *BaseController) post(ctx *gin.Context) {
+func (c *BaseController) put(ctx *gin.Context) {
 }

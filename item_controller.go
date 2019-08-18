@@ -27,11 +27,13 @@ func (c *BaseItemController) RegisterRoutes(controller IBaseItemController, path
 	router.RegisterRoutes(controller, path, router.RouterGroup)
 }
 
+// POST
 func (c *BaseItemController) post(ctx *gin.Context) {
 	c.BaseController.post(ctx)
 	c.Controller.Post(c.NewRequest(ctx))
 }
 
+// GET
 func (c *BaseItemController) Get(request *models.Request) {
 	result, err := c.LogicHandler.DoGet(request)
 	if c.HandleError(request, result, err) {
@@ -49,3 +51,16 @@ func (c *BaseItemController) get(ctx *gin.Context) {
 	c.Controller.Get(req)
 }
 
+// PUT
+func (c *BaseItemController) Put(request *models.Request) {
+	err := c.LogicHandler.DoUpdate(request)
+	if c.HandleErrorNoResult(request, err) {
+		return
+	}
+	request.Context.JSON(204, nil)
+}
+
+func (c *BaseItemController) put(ctx *gin.Context) {
+	c.BaseController.put(ctx)
+	c.Controller.Put(c.NewRequest(ctx))
+}

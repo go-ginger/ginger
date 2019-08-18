@@ -22,6 +22,7 @@ func (group *RouterGroup) RegisterRoutes(controller IController, path string, ro
 	routesMap := map[string]gin.HandlerFunc{
 		"Get":  controller.get,
 		"Post": controller.post,
+		"Put":  controller.put,
 	}
 	for _, route := range routes {
 		if handler, ok := routesMap[route.Method]; ok {
@@ -37,6 +38,9 @@ func (group *RouterGroup) RegisterRoutes(controller IController, path string, ro
 					break
 				case "Post":
 					router.POST(path, handlers...)
+					break
+				case "Put":
+					router.PUT(path, handlers...)
 					break
 				}
 			}
