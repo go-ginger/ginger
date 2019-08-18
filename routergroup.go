@@ -18,20 +18,27 @@ func (group *RouterGroup) Group(relativePath string) *RouterGroup {
 }
 
 func (group *RouterGroup) RegisterRoutes(controller IController, path string, router *gin.RouterGroup) {
-	routes := map[string]gin.HandlerFunc{
+	routes := controller.GetRoutes()
+	routesMap := map[string]gin.HandlerFunc{
 		"Get":  controller.get,
 		"Post": controller.post,
 	}
-	for method, handler := range routes {
-		f := helpers.ReflectMethod(controller, method)
-		if f != nil {
-			switch method {
-			case "Get":
-				router.GET(path, handler)
-				break
-			case "Post":
-				router.POST(path, handler)
-				break
+	for _, route := range routes {
+		if handler, ok := routesMap[route.Method]; ok {
+			f := helpers.ReflectMethod(controller, route.Method)
+			if f != nil {
+				handlers := []gin.HandlerFunc{
+					handler,
+				}
+				handlers = append(handlers, route.Handlers...)
+				switch route.Method {
+				case "Get":
+					router.GET(path, handlers...)
+					break
+				case "Post":
+					router.POST(path, handlers...)
+					break
+				}
 			}
 		}
 	}

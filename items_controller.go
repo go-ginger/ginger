@@ -16,6 +16,10 @@ type BaseItemsController struct {
 	Controller IBaseItemsController
 }
 
+func (c *BaseItemsController) GetRoutes() []BaseControllerRoute {
+	return c.Routes
+}
+
 func (c *BaseItemsController) RegisterRoutes(controller IBaseItemsController, path string, router *RouterGroup) {
 	c.Controller = controller
 	router.RegisterRoutes(controller, path, router.RouterGroup)

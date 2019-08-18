@@ -8,6 +8,8 @@ import (
 )
 
 type IController interface {
+	GetRoutes() []BaseControllerRoute
+	
 	get(ctx *gin.Context)
 	post(ctx *gin.Context)
 
@@ -17,15 +19,32 @@ type IController interface {
 	Delete(request *models.Request)
 }
 
+type BaseControllerRoute struct {
+	Method   string
+	Handlers []gin.HandlerFunc
+}
+
 type BaseController struct {
 	IController
 
+	Routes       []BaseControllerRoute
 	LogicHandler logic.IBaseLogicHandler
 }
 
 func (c *BaseController) Init(logicHandler logic.IBaseLogicHandler, dbHandler dl.IBaseDbHandler) {
 	c.LogicHandler = logicHandler
 	c.LogicHandler.Init(dbHandler)
+}
+
+func (c *BaseController) AddRoute(method string, handlers ...gin.HandlerFunc) {
+	c.Routes = append(c.Routes, BaseControllerRoute{
+		Method:   method,
+		Handlers: handlers,
+	})
+}
+
+func (c *BaseController) GetRoutes() []BaseControllerRoute {
+	return c.Routes
 }
 
 func (c *BaseController) HandleError(request *models.Request, result interface{}, err error) (handled bool) {
