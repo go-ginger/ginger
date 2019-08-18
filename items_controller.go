@@ -22,20 +22,20 @@ func (c *BaseItemsController) RegisterRoutes(controller IBaseItemsController, pa
 }
 
 func (c *BaseItemsController) Post(request *models.Request) {
-	result, err := c.LogicHandler.Create(request)
+	result, err := c.LogicHandler.DoCreate(request)
 	if c.HandleError(request, result, err) {
 		return
 	}
-	request.Context.JSON(200, result)
+	request.Context.JSON(201, result)
 }
 
 func (c *BaseItemsController) post(ctx *gin.Context) {
 	c.BaseController.post(ctx)
-	c.Controller.Post(NewRequest(ctx))
+	c.Controller.Post(c.NewRequest(ctx))
 }
 
 func (c *BaseItemsController) Get(request *models.Request) {
-	result, err := c.LogicHandler.Paginate(request)
+	result, err := c.LogicHandler.DoPaginate(request)
 	if c.HandleError(request, result, err) {
 		return
 	}
@@ -45,5 +45,5 @@ func (c *BaseItemsController) Get(request *models.Request) {
 func (c *BaseItemsController) get(ctx *gin.Context) {
 	c.handlePagination(ctx)
 	c.BaseController.get(ctx)
-	c.Controller.Get(NewRequest(ctx))
+	c.Controller.Get(c.NewRequest(ctx))
 }

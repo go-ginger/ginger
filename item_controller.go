@@ -23,8 +23,13 @@ func (c *BaseItemController) RegisterRoutes(controller IBaseItemController, path
 	router.RegisterRoutes(controller, path, router.RouterGroup)
 }
 
+func (c *BaseItemController) post(ctx *gin.Context) {
+	c.BaseController.post(ctx)
+	c.Controller.Post(c.NewRequest(ctx))
+}
+
 func (c *BaseItemController) Get(request *models.Request) {
-	result, err := c.LogicHandler.Get(request)
+	result, err := c.LogicHandler.DoGet(request)
 	if c.HandleError(request, result, err) {
 		return
 	}
@@ -33,7 +38,7 @@ func (c *BaseItemController) Get(request *models.Request) {
 
 func (c *BaseItemController) get(ctx *gin.Context) {
 	c.BaseController.get(ctx)
-	req := NewRequest(ctx)
+	req := c.NewRequest(ctx)
 	req.Filters = &models.Filters{
 		"id": req.ID,
 	}

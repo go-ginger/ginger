@@ -29,6 +29,9 @@ func (group *RouterGroup) RegisterRoutes(controller IController, path string, ro
 			case "Get":
 				router.GET(path, handler)
 				break
+			case "Post":
+				router.POST(path, handler)
+				break
 			}
 		}
 	}

@@ -13,7 +13,7 @@ func init() {
 	methodsWithBody = []string{"POST", "PUT"}
 }
 
-func NewRequest(ctx *gin.Context) *models.Request {
+func(c *BaseController) NewRequest(ctx *gin.Context) *models.Request {
 	filtersFace, exists := ctx.Get("filters")
 	var filters models.Filters
 	if exists {
@@ -56,7 +56,9 @@ func NewRequest(ctx *gin.Context) *models.Request {
 		PerPage: perPage,
 	}
 	if helpers.Contains(methodsWithBody, ctx.Request.Method) {
-		ctx.BindJSON(request.Body)
+		c.LogicHandler.Model(request)
+		ctx.BindJSON(request.Model)
+		request.Body = request.Model
 	}
 	return request
 }
