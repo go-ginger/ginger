@@ -1,6 +1,7 @@
 package ginger
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/kulichak/helpers"
 	"github.com/kulichak/models"
@@ -13,7 +14,7 @@ func init() {
 	methodsWithBody = []string{"POST", "PUT"}
 }
 
-func(c *BaseController) NewRequest(ctx *gin.Context) *models.Request {
+func (c *BaseController) NewRequest(ctx *gin.Context) (*models.Request, error) {
 	filtersFace, exists := ctx.Get("filters")
 	var filters models.Filters
 	if exists {
@@ -57,8 +58,11 @@ func(c *BaseController) NewRequest(ctx *gin.Context) *models.Request {
 	}
 	if helpers.Contains(methodsWithBody, ctx.Request.Method) {
 		c.LogicHandler.Model(request)
-		ctx.BindJSON(request.Model)
+		err := BindJSON(ctx, request.Model)
 		request.Body = request.Model
+		if err != nil {
+			return request, errors.New("Invalid request information. error: " + err.Error())
+		}
 	}
-	return request
+	return request, nil
 }

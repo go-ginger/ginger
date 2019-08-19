@@ -50,7 +50,9 @@ func (c *BaseController) GetRoutes() []BaseControllerRoute {
 
 func (c *BaseController) HandleErrorNoResult(request *models.Request, err error) (handled bool) {
 	if err != nil {
-		request.Context.JSON(400, err)
+		request.Context.JSON(400, models.Error{
+			Message: err.Error(),
+		})
 		return true
 	}
 	return false
@@ -58,7 +60,9 @@ func (c *BaseController) HandleErrorNoResult(request *models.Request, err error)
 
 func (c *BaseController) HandleError(request *models.Request, result interface{}, err error) (handled bool) {
 	if err != nil {
-		request.Context.JSON(400, err)
+		request.Context.JSON(400, models.Error{
+			Message: err.Error(),
+		})
 		return true
 	} else if result == nil {
 		request.Context.JSON(404, result)

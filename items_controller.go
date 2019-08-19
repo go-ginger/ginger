@@ -36,7 +36,11 @@ func (c *BaseItemsController) Post(request *models.Request) {
 
 func (c *BaseItemsController) post(ctx *gin.Context) {
 	c.BaseController.post(ctx)
-	c.Controller.Post(c.NewRequest(ctx))
+	req, err := c.NewRequest(ctx)
+	if c.HandleErrorNoResult(req, err) {
+		return
+	}
+	c.Controller.Post(req)
 }
 
 // GET
@@ -51,7 +55,11 @@ func (c *BaseItemsController) Get(request *models.Request) {
 func (c *BaseItemsController) get(ctx *gin.Context) {
 	c.handlePagination(ctx)
 	c.BaseController.get(ctx)
-	c.Controller.Get(c.NewRequest(ctx))
+	req, err := c.NewRequest(ctx)
+	if c.HandleErrorNoResult(req, err) {
+		return
+	}
+	c.Controller.Get(req)
 }
 
 // PUT
@@ -65,5 +73,9 @@ func (c *BaseItemsController) Put(request *models.Request) {
 
 func (c *BaseItemsController) put(ctx *gin.Context) {
 	c.BaseController.put(ctx)
-	c.Controller.Put(c.NewRequest(ctx))
+	req, err := c.NewRequest(ctx)
+	if c.HandleErrorNoResult(req, err) {
+		return
+	}
+	c.Controller.Put(req)
 }
