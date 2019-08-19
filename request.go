@@ -2,7 +2,7 @@ package ginger
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/kulichak/ginger/helpers"
+	"github.com/kulichak/helpers"
 	"github.com/kulichak/models"
 	"strconv"
 )

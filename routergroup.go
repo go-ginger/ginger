@@ -2,7 +2,7 @@ package ginger
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/kulichak/ginger/helpers"
+	"github.com/kulichak/helpers"
 )
 
 type RouterGroup struct {
@@ -24,14 +24,16 @@ func (group *RouterGroup) RegisterRoutes(controller IController, path string, ro
 		"Post": controller.post,
 		"Put":  controller.put,
 	}
+	if config.CorsEnabled {
+		router.OPTIONS(path, CORS)
+	}
 	for _, route := range routes {
 		if handler, ok := routesMap[route.Method]; ok {
 			f := helpers.ReflectMethod(controller, route.Method)
 			if f != nil {
-				handlers := []gin.HandlerFunc{
-					handler,
-				}
+				var handlers []gin.HandlerFunc
 				handlers = append(handlers, route.Handlers...)
+				handlers = append(handlers, handler)
 				switch route.Method {
 				case "Get":
 					router.GET(path, handlers...)
