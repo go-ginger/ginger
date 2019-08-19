@@ -24,9 +24,8 @@ func InitializeConfig(input interface{}) {
 	CorsAllowCredentials := v.FieldByName("CorsAllowCredentials")
 	CorsAllowHeaders := v.FieldByName("CorsAllowHeaders")
 	CorsAllowMethods := v.FieldByName("CorsAllowMethods")
-
 	config = Config{
-		CorsEnabled:          CorsEnabled.String() == "true",
+		CorsEnabled:          CorsEnabled.Interface() == true,
 		CorsAllowOrigins:     CorsAllowOrigins.String(),
 		CorsAllowCredentials: CorsAllowCredentials.String(),
 		CorsAllowHeaders:     CorsAllowHeaders.String(),
