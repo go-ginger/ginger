@@ -32,6 +32,9 @@ func (group *RouterGroup) RegisterRoutes(controller IController, path string, ro
 			f := helpers.ReflectMethod(controller, route.Method)
 			if f != nil {
 				var handlers []gin.HandlerFunc
+				if config.CorsEnabled {
+					handlers = append(handlers, CORS)
+				}
 				handlers = append(handlers, route.Handlers...)
 				handlers = append(handlers, handler)
 				switch route.Method {
