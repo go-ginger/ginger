@@ -49,7 +49,7 @@ func (c *BaseController) GetRoutes() []BaseControllerRoute {
 }
 
 func (c *BaseController) handleError(err error) (*int, error) {
-	if err != nil { 
+	if err != nil {
 		status := 400
 		message := err.Error()
 		if e, ok := err.(models.Error); ok {

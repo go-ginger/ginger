@@ -56,13 +56,20 @@ func (c *BaseController) NewRequest(ctx *gin.Context) (*models.Request, error) {
 		Page:    page,
 		PerPage: perPage,
 	}
+	if request.ID != "" {
+		if request.Filters == nil || *request.Filters == nil {
+			request.Filters = &models.Filters{}
+		}
+		(*request.Filters)["id"] = request.ID
+	}
 	if helpers.Contains(methodsWithBody, ctx.Request.Method) {
 		c.LogicHandler.Model(request)
-		err := BindJSON(ctx, request.Model)
 		request.Body = request.Model
+		err := BindJSON(ctx, request.Body)
 		if err != nil {
 			return request, errors.New("Invalid request information. error: " + err.Error())
 		}
+		c.LogicHandler.Model(request)
 	}
 	return request, nil
 }

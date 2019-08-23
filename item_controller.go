@@ -52,9 +52,6 @@ func (c *BaseItemController) get(ctx *gin.Context) {
 	if c.HandleErrorNoResult(req, err) {
 		return
 	}
-	req.Filters = &models.Filters{
-		"id": req.ID,
-	}
 	c.Controller.Get(req)
 }
 
