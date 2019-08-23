@@ -48,22 +48,43 @@ func (c *BaseController) GetRoutes() []BaseControllerRoute {
 	return c.Routes
 }
 
+func (c *BaseController) handleError(err error) (*int, error) {
+	if err != nil { 
+		status := 400
+		message := err.Error()
+		if e, ok := err.(models.Error); ok {
+			status = e.Status
+		}
+		return &status, &models.Error{
+			Status:  status,
+			Message: message,
+		}
+	}
+	return nil, nil
+}
+
 func (c *BaseController) HandleErrorNoResult(request *models.Request, err error) (handled bool) {
 	if err != nil {
-		request.Context.JSON(400, models.Error{
-			Message: err.Error(),
-		})
-		return true
+		status, e := c.handleError(err)
+		if status != nil && e != nil {
+			request.Context.JSON(*status, models.Error{
+				Message: e.Error(),
+			})
+			return true
+		}
 	}
 	return false
 }
 
 func (c *BaseController) HandleError(request *models.Request, result interface{}, err error) (handled bool) {
 	if err != nil {
-		request.Context.JSON(400, models.Error{
-			Message: err.Error(),
-		})
-		return true
+		status, e := c.handleError(err)
+		if status != nil && e != nil {
+			request.Context.JSON(*status, models.Error{
+				Message: e.Error(),
+			})
+			return true
+		}
 	} else if result == nil {
 		request.Context.JSON(404, result)
 		return true
