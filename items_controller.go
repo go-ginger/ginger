@@ -26,12 +26,13 @@ func (c *BaseItemsController) RegisterRoutes(controller IBaseItemsController, pa
 }
 
 // POST
-func (c *BaseItemsController) Post(request *models.Request) {
+func (c *BaseItemsController) Post(request models.IRequest) {
 	result, err := c.LogicHandler.DoCreate(request)
 	if c.HandleError(request, result, err) {
 		return
 	}
-	request.Context.JSON(201, result)
+	req := request.GetBaseRequest()
+	req.Context.JSON(201, result)
 }
 
 func (c *BaseItemsController) post(ctx *gin.Context) {
@@ -44,12 +45,13 @@ func (c *BaseItemsController) post(ctx *gin.Context) {
 }
 
 // GET
-func (c *BaseItemsController) Get(request *models.Request) {
+func (c *BaseItemsController) Get(request models.IRequest) {
 	result, err := c.LogicHandler.DoPaginate(request)
 	if c.HandleError(request, result, err) {
 		return
 	}
-	request.Context.JSON(200, result)
+	req := request.GetBaseRequest()
+	req.Context.JSON(200, result)
 }
 
 func (c *BaseItemsController) get(ctx *gin.Context) {
@@ -63,12 +65,13 @@ func (c *BaseItemsController) get(ctx *gin.Context) {
 }
 
 // PUT
-func (c *BaseItemsController) Put(request *models.Request) {
+func (c *BaseItemsController) Put(request models.IRequest) {
 	err := c.LogicHandler.DoUpdate(request)
 	if c.HandleError(request, nil, err) {
 		return
 	}
-	request.Context.JSON(204, nil)
+	req := request.GetBaseRequest()
+	req.Context.JSON(204, nil)
 }
 
 func (c *BaseItemsController) put(ctx *gin.Context) {

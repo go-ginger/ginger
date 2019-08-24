@@ -14,10 +14,10 @@ type IController interface {
 	get(ctx *gin.Context)
 	put(ctx *gin.Context)
 
-	Post(request *models.Request)
-	Get(request *models.Request)
-	Put(request *models.Request)
-	Delete(request *models.Request)
+	Post(request models.IRequest)
+	Get(request models.IRequest)
+	Put(request models.IRequest)
+	Delete(request models.IRequest)
 }
 
 type BaseControllerRoute struct {
@@ -34,7 +34,10 @@ type BaseController struct {
 
 func (c *BaseController) Init(logicHandler logic.IBaseLogicHandler, dbHandler dl.IBaseDbHandler) {
 	c.LogicHandler = logicHandler
-	c.LogicHandler.Init(dbHandler)
+	c.LogicHandler.Init(logicHandler, dbHandler)
+}
+func (c *BaseController) GetRequestSample() models.IRequest {
+	return &models.Request{}
 }
 
 func (c *BaseController) AddRoute(method string, handlers ...gin.HandlerFunc) {
@@ -63,11 +66,12 @@ func (c *BaseController) handleError(err error) (*int, error) {
 	return nil, nil
 }
 
-func (c *BaseController) HandleErrorNoResult(request *models.Request, err error) (handled bool) {
+func (c *BaseController) HandleErrorNoResult(request models.IRequest, err error) (handled bool) {
 	if err != nil {
 		status, e := c.handleError(err)
 		if status != nil && e != nil {
-			request.Context.JSON(*status, models.Error{
+			req := request.GetBaseRequest()
+			req.Context.JSON(*status, models.Error{
 				Message: e.Error(),
 			})
 			return true
@@ -76,17 +80,18 @@ func (c *BaseController) HandleErrorNoResult(request *models.Request, err error)
 	return false
 }
 
-func (c *BaseController) HandleError(request *models.Request, result interface{}, err error) (handled bool) {
+func (c *BaseController) HandleError(request models.IRequest, result interface{}, err error) (handled bool) {
+	req := request.GetBaseRequest()
 	if err != nil {
 		status, e := c.handleError(err)
 		if status != nil && e != nil {
-			request.Context.JSON(*status, models.Error{
+			req.Context.JSON(*status, models.Error{
 				Message: e.Error(),
 			})
 			return true
 		}
 	} else if result == nil {
-		request.Context.JSON(404, result)
+		req.Context.JSON(404, result)
 		return true
 	}
 	return false

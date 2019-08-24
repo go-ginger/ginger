@@ -14,7 +14,7 @@ func init() {
 	methodsWithBody = []string{"POST", "PUT"}
 }
 
-func (c *BaseController) NewRequest(ctx *gin.Context) (*models.Request, error) {
+func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 	filtersFace, exists := ctx.Get("filters")
 	var filters models.Filters
 	if exists {
@@ -71,5 +71,7 @@ func (c *BaseController) NewRequest(ctx *gin.Context) (*models.Request, error) {
 		}
 		c.LogicHandler.Model(request)
 	}
-	return request, nil
+	sample := c.GetRequestSample()
+	sample.SetBaseRequest(request)
+	return sample, nil
 }

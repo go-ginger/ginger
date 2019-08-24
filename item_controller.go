@@ -38,12 +38,13 @@ func (c *BaseItemController) post(ctx *gin.Context) {
 }
 
 // GET
-func (c *BaseItemController) Get(request *models.Request) {
+func (c *BaseItemController) Get(request models.IRequest) {
 	result, err := c.LogicHandler.DoGet(request)
 	if c.HandleError(request, result, err) {
 		return
 	}
-	request.Context.JSON(200, result)
+	req := request.GetBaseRequest()
+	req.Context.JSON(200, result)
 }
 
 func (c *BaseItemController) get(ctx *gin.Context) {
@@ -56,12 +57,13 @@ func (c *BaseItemController) get(ctx *gin.Context) {
 }
 
 // PUT
-func (c *BaseItemController) Put(request *models.Request) {
+func (c *BaseItemController) Put(request models.IRequest) {
 	err := c.LogicHandler.DoUpdate(request)
 	if c.HandleErrorNoResult(request, err) {
 		return
 	}
-	request.Context.JSON(204, nil)
+	req := request.GetBaseRequest()
+	req.Context.JSON(204, nil)
 }
 
 func (c *BaseItemController) put(ctx *gin.Context) {
