@@ -8,6 +8,7 @@ import (
 )
 
 type IController interface {
+	GetRequestSample() models.IRequest
 	GetRoutes() []BaseControllerRoute
 
 	post(ctx *gin.Context)
@@ -28,11 +29,13 @@ type BaseControllerRoute struct {
 type BaseController struct {
 	IController
 
+	Controller   IController
 	Routes       []BaseControllerRoute
 	LogicHandler logic.IBaseLogicHandler
 }
 
-func (c *BaseController) Init(logicHandler logic.IBaseLogicHandler, dbHandler dl.IBaseDbHandler) {
+func (c *BaseController) Init(controller IController, logicHandler logic.IBaseLogicHandler, dbHandler dl.IBaseDbHandler) {
+	c.Controller = controller
 	c.LogicHandler = logicHandler
 	c.LogicHandler.Init(logicHandler, dbHandler)
 }
