@@ -16,6 +16,10 @@ type BaseItemsController struct {
 	Controller IBaseItemsController
 }
 
+func (c *BaseItemsController) GetHandler(group *RouterGroup, routeHandler RouteHandler) gin.HandlerFunc {
+	return c.BaseController.GetHandler(group, routeHandler)
+}
+
 func (c *BaseItemsController) GetRoutes() []BaseControllerRoute {
 	return c.Routes
 }
@@ -26,59 +30,54 @@ func (c *BaseItemsController) RegisterRoutes(controller IBaseItemsController, pa
 }
 
 // POST
-func (c *BaseItemsController) Post(request models.IRequest) {
+func (c *BaseItemsController) Post(request models.IRequest) (result interface{}) {
 	result, err := c.LogicHandler.DoCreate(request)
 	if c.HandleError(request, result, err) {
 		return
 	}
 	req := request.GetBaseRequest()
 	req.Context.JSON(201, result)
+	return
 }
 
-func (c *BaseItemsController) post(ctx *gin.Context) {
-	c.BaseController.post(ctx)
-	req, err := c.NewRequest(ctx)
-	if c.HandleErrorNoResult(req, err) {
-		return
-	}
-	c.Controller.Post(req)
+func (c *BaseItemsController) post(request models.IRequest) (result interface{}) {
+	c.BaseController.post(request)
+	result = c.Controller.Post(request)
+	return
 }
 
 // GET
-func (c *BaseItemsController) Get(request models.IRequest) {
+func (c *BaseItemsController) Get(request models.IRequest) (result interface{}) {
 	result, err := c.LogicHandler.DoPaginate(request)
 	if c.HandleError(request, result, err) {
 		return
 	}
 	req := request.GetBaseRequest()
 	req.Context.JSON(200, result)
+	return
 }
 
-func (c *BaseItemsController) get(ctx *gin.Context) {
+func (c *BaseItemsController) get(request models.IRequest) (result interface{}) {
+	ctx := request.GetContext()
 	c.handlePagination(ctx)
-	c.BaseController.get(ctx)
-	req, err := c.NewRequest(ctx)
-	if c.HandleErrorNoResult(req, err) {
-		return
-	}
-	c.Controller.Get(req)
+	c.BaseController.get(request)
+	c.Controller.Get(request)
+	return
 }
 
 // PUT
-func (c *BaseItemsController) Put(request models.IRequest) {
+func (c *BaseItemsController) Put(request models.IRequest) (result interface{}) {
 	err := c.LogicHandler.DoUpdate(request)
 	if c.HandleError(request, nil, err) {
 		return
 	}
 	req := request.GetBaseRequest()
 	req.Context.JSON(204, nil)
+	return
 }
 
-func (c *BaseItemsController) put(ctx *gin.Context) {
-	c.BaseController.put(ctx)
-	req, err := c.NewRequest(ctx)
-	if c.HandleErrorNoResult(req, err) {
-		return
-	}
-	c.Controller.Put(req)
+func (c *BaseItemsController) put(request models.IRequest) (result interface{}) {
+	c.BaseController.put(request)
+	result = c.Controller.Put(request)
+	return
 }

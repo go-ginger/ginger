@@ -11,19 +11,28 @@ type IController interface {
 	GetRequestSample() models.IRequest
 	GetRoutes() []BaseControllerRoute
 
-	post(ctx *gin.Context)
-	get(ctx *gin.Context)
-	put(ctx *gin.Context)
+	GetHandler(group *RouterGroup, routeHandler RouteHandler) gin.HandlerFunc
 
-	Post(request models.IRequest)
-	Get(request models.IRequest)
-	Put(request models.IRequest)
-	Delete(request models.IRequest)
+	post(request models.IRequest) (result interface{})
+	get(request models.IRequest) (result interface{})
+	put(request models.IRequest) (result interface{})
+
+	Post(request models.IRequest) (result interface{})
+	Get(request models.IRequest) (result interface{})
+	Put(request models.IRequest) (result interface{})
+	Delete(request models.IRequest) (result interface{})
+}
+
+type HandlerFunc func(request models.IRequest) (result interface{})
+type RouteHandler struct {
+	Type     int
+	Handler  HandlerFunc
+	CallBack func(request models.IRequest, extra interface{})
 }
 
 type BaseControllerRoute struct {
 	Method   string
-	Handlers []gin.HandlerFunc
+	Handlers []RouteHandler
 }
 
 type BaseController struct {
@@ -39,11 +48,45 @@ func (c *BaseController) Init(controller IController, logicHandler logic.IBaseLo
 	c.LogicHandler = logicHandler
 	c.LogicHandler.Init(logicHandler, dbHandler)
 }
+
 func (c *BaseController) GetRequestSample() models.IRequest {
 	return &models.Request{}
 }
 
-func (c *BaseController) AddRoute(method string, handlers ...gin.HandlerFunc) {
+func (c *BaseController) AddRoute(method string, handlers ...HandlerFunc) {
+	routeHandlers := make([]RouteHandler, 0)
+	for _, handler := range handlers {
+		routeHandlers = append(routeHandlers, RouteHandler{
+			Handler: handler,
+		})
+	}
+	c.Routes = append(c.Routes, BaseControllerRoute{
+		Method:   method,
+		Handlers: routeHandlers,
+	})
+}
+
+func (c *BaseController) GetHandler(group *RouterGroup, routeHandler RouteHandler) gin.HandlerFunc {
+	var request models.IRequest
+	return func(context *gin.Context) {
+		var result interface{}
+		if routeHandler.Handler != nil {
+			routeHandler.Handler(request)
+		}
+		if routeHandler.Type == -1 {
+			req, err := c.NewRequest(context)
+			if c.HandleErrorNoResult(req, err) {
+				context.Abort()
+				return
+			}
+		}
+		if routeHandler.CallBack != nil {
+			routeHandler.CallBack(request, result)
+		}
+	}
+}
+
+func (c *BaseController) AddRouteWithCallback(method string, handlers ...RouteHandler) {
 	c.Routes = append(c.Routes, BaseControllerRoute{
 		Method:   method,
 		Handlers: handlers,
@@ -100,8 +143,9 @@ func (c *BaseController) HandleError(request models.IRequest, result interface{}
 	return false
 }
 
-func (c *BaseController) handleFilters(ctx *gin.Context) {
-	ctx.Set("filters", GetQueryFilters(ctx))
+func (c *BaseController) handleFilters(request models.IRequest) {
+	context := request.GetContext()
+	context.Set("filters", GetQueryFilters(context))
 }
 
 func (c *BaseController) handlePagination(ctx *gin.Context) {
@@ -116,17 +160,21 @@ func (c *BaseController) handlePagination(ctx *gin.Context) {
 	}
 }
 
-func (c *BaseController) handleFields(ctx *gin.Context) {
-	ctx.Set("fields", GetFetchFields(ctx, nil))
+func (c *BaseController) handleFields(request models.IRequest) {
+	context := request.GetContext()
+	context.Set("fields", GetFetchFields(context, nil))
 }
 
-func (c *BaseController) post(ctx *gin.Context) {
+func (c *BaseController) post(request models.IRequest) (result interface{}) {
+	return
 }
 
-func (c *BaseController) get(ctx *gin.Context) {
-	c.handleFields(ctx)
-	c.handleFilters(ctx)
+func (c *BaseController) get(request models.IRequest) (result interface{}) {
+	c.handleFields(request)
+	c.handleFilters(request)
+	return
 }
 
-func (c *BaseController) put(ctx *gin.Context) {
+func (c *BaseController) put(request models.IRequest) (result interface{}) {
+	return
 }

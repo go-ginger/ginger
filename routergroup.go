@@ -19,7 +19,7 @@ func (group *RouterGroup) Group(relativePath string) *RouterGroup {
 
 func (group *RouterGroup) RegisterRoutes(controller IController, path string, router *gin.RouterGroup) {
 	routes := controller.GetRoutes()
-	routesMap := map[string]gin.HandlerFunc{
+	routesMap := map[string]HandlerFunc{
 		"Get":  controller.get,
 		"Post": controller.post,
 		"Put":  controller.put,
@@ -27,6 +27,11 @@ func (group *RouterGroup) RegisterRoutes(controller IController, path string, ro
 	if config.CorsEnabled {
 		router.OPTIONS(path, CORS)
 	}
+	router.Use(controller.GetHandler(group, RouteHandler{
+		Type:     -1,
+		Handler:  nil,
+		CallBack: nil,
+	}))
 	for _, route := range routes {
 		if handler, ok := routesMap[route.Method]; ok {
 			f := helpers.ReflectMethod(controller, route.Method)
@@ -35,8 +40,13 @@ func (group *RouterGroup) RegisterRoutes(controller IController, path string, ro
 				if config.CorsEnabled {
 					handlers = append(handlers, CORS)
 				}
-				handlers = append(handlers, route.Handlers...)
-				handlers = append(handlers, handler)
+				for _, handler := range route.Handlers {
+					handlers = append(handlers, controller.GetHandler(group, handler))
+				}
+				handlers = append(handlers, controller.GetHandler(group, RouteHandler{
+					Handler:  handler,
+					CallBack: nil,
+				}))
 				switch route.Method {
 				case "Get":
 					router.GET(path, handlers...)
