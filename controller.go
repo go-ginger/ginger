@@ -67,17 +67,25 @@ func (c *BaseController) AddRoute(method string, handlers ...HandlerFunc) {
 }
 
 func (c *BaseController) GetHandler(group *RouterGroup, routeHandler RouteHandler) gin.HandlerFunc {
-	var request models.IRequest
 	return func(context *gin.Context) {
-		var result interface{}
-		if routeHandler.Handler != nil {
-			routeHandler.Handler(request)
+		var request models.IRequest
+		if req, ok := context.Keys["request"]; ok {
+			request = req.(models.IRequest)
 		}
+		var result interface{}
 		if routeHandler.Type == -1 {
 			req, err := c.NewRequest(context)
 			if c.HandleErrorNoResult(req, err) {
 				context.Abort()
 				return
+			}
+			if context.Keys == nil {
+				context.Keys = map[string]interface{}{}
+			}
+			context.Keys["request"] = req
+		} else {
+			if routeHandler.Handler != nil {
+				routeHandler.Handler(request)
 			}
 		}
 		if routeHandler.CallBack != nil {

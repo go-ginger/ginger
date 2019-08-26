@@ -27,16 +27,17 @@ func (group *RouterGroup) RegisterRoutes(controller IController, path string, ro
 	if config.CorsEnabled {
 		router.OPTIONS(path, CORS)
 	}
-	router.Use(controller.GetHandler(group, RouteHandler{
+	baseHandler := controller.GetHandler(group, RouteHandler{
 		Type:     -1,
 		Handler:  nil,
 		CallBack: nil,
-	}))
+	})
 	for _, route := range routes {
 		if handler, ok := routesMap[route.Method]; ok {
 			f := helpers.ReflectMethod(controller, route.Method)
 			if f != nil {
 				var handlers []gin.HandlerFunc
+				handlers = append(handlers, baseHandler)
 				if config.CorsEnabled {
 					handlers = append(handlers, CORS)
 				}
