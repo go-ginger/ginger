@@ -85,7 +85,14 @@ func (c *BaseController) GetHandler(group *RouterGroup, routeHandler RouteHandle
 			context.Keys["request"] = req
 		} else {
 			if routeHandler.Handler != nil {
-				routeHandler.Handler(request)
+				result := routeHandler.Handler(request)
+				if result != nil {
+					if err, ok := result.(error); ok {
+						if c.HandleErrorNoResult(request, err) {
+							return
+						}
+					}
+				}
 			}
 		}
 		if routeHandler.CallBack != nil {
