@@ -5,6 +5,7 @@ import (
 	"github.com/kulichak/dl"
 	"github.com/kulichak/logic"
 	"github.com/kulichak/models"
+	"github.com/kulichak/models/errors"
 )
 
 type IController interface {
@@ -116,10 +117,10 @@ func (c *BaseController) handleError(err error) (*int, error) {
 	if err != nil {
 		status := 400
 		message := err.Error()
-		if e, ok := err.(models.Error); ok {
+		if e, ok := err.(errors.Error); ok {
 			status = e.Status
 		}
-		return &status, &models.Error{
+		return &status, &errors.Error{
 			Status:  status,
 			Message: message,
 		}
@@ -132,7 +133,7 @@ func (c *BaseController) HandleErrorNoResult(request models.IRequest, err error)
 		status, e := c.handleError(err)
 		if status != nil && e != nil {
 			req := request.GetBaseRequest()
-			req.Context.JSON(*status, models.Error{
+			req.Context.JSON(*status, errors.Error{
 				Message: e.Error(),
 			})
 			return true
@@ -146,7 +147,7 @@ func (c *BaseController) HandleError(request models.IRequest, result interface{}
 	if err != nil {
 		status, e := c.handleError(err)
 		if status != nil && e != nil {
-			req.Context.JSON(*status, models.Error{
+			req.Context.JSON(*status, errors.Error{
 				Message: e.Error(),
 			})
 			return true
