@@ -176,7 +176,7 @@ func (c *BaseController) handlePagination(request models.IRequest) {
 	context := request.GetContext()
 	req := request.GetBaseRequest()
 
-	var v []models.SortItem = GetSortFields(context)
+	var v = GetSortFields(context)
 	if v != nil {
 		req.Sort = &v
 	}
