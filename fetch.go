@@ -20,11 +20,11 @@ func GetQueryFilters(ctx *gin.Context) map[string]interface{} {
 
 func GetSortFields(ctx *gin.Context) []models.SortItem {
 	sort := ctx.Query("sort")
+	result := make([]models.SortItem, 0)
 	if sort == "" {
-		sort = "-_score"
+		return result
 	}
 	sorts := strings.Split(sort, ",")
-	result := make([]models.SortItem, 0)
 	for _, sort := range sorts {
 		asc := true
 		if strings.HasPrefix(sort, "-") {

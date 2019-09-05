@@ -58,8 +58,7 @@ func (c *BaseItemsController) Get(request models.IRequest) (result interface{}) 
 }
 
 func (c *BaseItemsController) get(request models.IRequest) (result interface{}) {
-	ctx := request.GetContext()
-	c.handlePagination(ctx)
+	c.handlePagination(request)
 	c.BaseController.get(request)
 	c.Controller.Get(request)
 	return

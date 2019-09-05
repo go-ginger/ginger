@@ -6,6 +6,7 @@ import (
 	"github.com/kulichak/logic"
 	"github.com/kulichak/models"
 	"github.com/kulichak/models/errors"
+	"strconv"
 )
 
 type IController interface {
@@ -47,7 +48,9 @@ type BaseController struct {
 func (c *BaseController) Init(controller IController, logicHandler logic.IBaseLogicHandler, dbHandler dl.IBaseDbHandler) {
 	c.Controller = controller
 	c.LogicHandler = logicHandler
-	c.LogicHandler.Init(logicHandler, dbHandler)
+	if c.LogicHandler != nil {
+		c.LogicHandler.Init(logicHandler, dbHandler)
+	}
 }
 
 func (c *BaseController) GetRequestSample() models.IRequest {
@@ -161,24 +164,41 @@ func (c *BaseController) HandleError(request models.IRequest, result interface{}
 
 func (c *BaseController) handleFilters(request models.IRequest) {
 	context := request.GetContext()
-	context.Set("filters", GetQueryFilters(context))
+	req := request.GetBaseRequest()
+	var v models.Filters = GetQueryFilters(context)
+	if v != nil {
+		req.Filters = &v
+	}
+	context.Set("filters", v)
 }
 
-func (c *BaseController) handlePagination(ctx *gin.Context) {
-	if _, ok := ctx.GetQuery("sort"); ok {
-		ctx.Set("sort", GetSortFields(ctx))
+func (c *BaseController) handlePagination(request models.IRequest) {
+	context := request.GetContext()
+	req := request.GetBaseRequest()
+
+	var v []models.SortItem = GetSortFields(context)
+	if v != nil {
+		req.Sort = &v
 	}
-	queries := []string{"page", "per_page"}
-	for _, query := range queries {
-		if q, ok := ctx.GetQuery(query); ok {
-			ctx.Set(query, q)
-		}
+
+	if q, ok := context.GetQuery("page"); ok {
+		page, _ := strconv.ParseUint(q, 10, 32)
+		req.Page = page
+	}
+	if q, ok := context.GetQuery("per_page"); ok {
+		perPage, _ := strconv.ParseUint(q, 10, 32)
+		req.PerPage = perPage
 	}
 }
 
 func (c *BaseController) handleFields(request models.IRequest) {
 	context := request.GetContext()
-	context.Set("fields", GetFetchFields(context, nil))
+	req := request.GetBaseRequest()
+	var f models.Fields = GetFetchFields(context, nil)
+	if f != nil {
+		req.Fields = &f
+	}
+	context.Set("fields", f)
 }
 
 func (c *BaseController) post(request models.IRequest) (result interface{}) {
