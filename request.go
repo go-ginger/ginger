@@ -19,6 +19,8 @@ func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 	var filters models.Filters
 	if exists {
 		filters = filtersFace.(map[string]interface{})
+	} else {
+		filters = models.Filters{}
 	}
 	sortFace, exists := ctx.Get("sort")
 	var sort []models.SortItem
