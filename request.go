@@ -19,6 +19,8 @@ func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 	var filters models.Filters
 	if exists {
 		filters = filtersFace.(map[string]interface{})
+	} else {
+		filters = models.Filters{}
 	}
 	sortFace, exists := ctx.Get("sort")
 	var sort []models.SortItem
@@ -66,13 +68,15 @@ func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 	sample.SetBaseRequest(request)
 	request = sample.GetBaseRequest()
 	if helpers.Contains(methodsWithBody, ctx.Request.Method) {
-		c.LogicHandler.Model(sample)
-		sample.SetBody(request.Model)
-		err := BindJSON(ctx, request.Body)
-		if err != nil {
-			return request, errors.New("Invalid request information. error: " + err.Error())
+		if c.LogicHandler != nil {
+			c.LogicHandler.Model(sample)
+			sample.SetBody(request.Model)
+			err := BindJSON(ctx, request.Body)
+			if err != nil {
+				return request, errors.New("Invalid request information. error: " + err.Error())
+			}
+			c.LogicHandler.Model(sample)
 		}
-		c.LogicHandler.Model(sample)
 	}
 	return sample, nil
 }
