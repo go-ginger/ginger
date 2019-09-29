@@ -123,6 +123,9 @@ func (c *BaseController) handleError(err error) (*int, error) {
 		if e, ok := err.(errors.Error); ok {
 			status = e.Status
 		}
+		if status == 0 {
+			status = 400
+		}
 		return &status, &errors.Error{
 			Status:  status,
 			Message: message,
