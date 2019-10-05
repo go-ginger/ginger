@@ -3,7 +3,7 @@ github.com/gin-contrib/sse v0.0.0-20190301062529-5545eab6dad3 h1:t8FVkw33L+wilf2
 github.com/gin-contrib/sse v0.0.0-20190301062529-5545eab6dad3/go.mod h1:VJ0WA2NBN22VlZ2dKZQPAPnyWw5XTlK1KymzLKsr59s=
 github.com/gin-gonic/gin v1.4.0 h1:3tMoCCfM7ppqsR0ptz/wi1impNpT7/9wQtMZ8lr1mCQ=
 github.com/gin-gonic/gin v1.4.0/go.mod h1:OW2EZn3DO8Ln9oIKOvM++LBO+5UPHJJDH72/q/3rZdM=
-github.com/go-ginger/dl v1.0.0 h1:Rt+H7i+lct58kKpMz+sA+Vmt++ce8XvHHWq9N3vjSR0=
+github.com/go-ginger/dl v1.0.0 h1:5SS8pz6KcVyfsuuy3LvbIPxE/yTPhSjRrETVrPWHdww=
 github.com/go-ginger/dl v1.0.0/go.mod h1:rCWneMp6koeudAs2Nyn6NFJW+OvXQuSCp8XeDMK9QuI=
 github.com/go-ginger/helpers v1.0.0 h1:scPK0xH2UvarXtm4l/SAd7ldnwTZYMd1epW6bV+lj+k=
 github.com/go-ginger/helpers v1.0.0/go.mod h1:Gsu1X7KIpaCt3Pj7sVoAFulEWwUQiwecyhQgdhhwCmc=
