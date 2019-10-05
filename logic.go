@@ -1,6 +1,6 @@
 package ginger
 
-import "github.com/kulichak/models"
+import "github.com/go-ginger/models"
 
 type ILogic interface {
 	Paginate(request models.IRequest)

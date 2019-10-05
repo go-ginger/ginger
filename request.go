@@ -3,8 +3,8 @@ package ginger
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/kulichak/helpers"
-	"github.com/kulichak/models"
+	"github.com/go-ginger/helpers"
+	"github.com/go-ginger/models"
 	"strconv"
 )
 

@@ -2,10 +2,10 @@ package ginger
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/kulichak/dl"
-	"github.com/kulichak/logic"
-	"github.com/kulichak/models"
-	"github.com/kulichak/models/errors"
+	"github.com/go-ginger/dl"
+	"github.com/go-ginger/logic"
+	"github.com/go-ginger/models"
+	"github.com/go-ginger/models/errors"
 	"strconv"
 )
 

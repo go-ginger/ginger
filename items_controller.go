@@ -2,7 +2,7 @@ package ginger
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/kulichak/models"
+	"github.com/go-ginger/models"
 )
 
 type IBaseItemsController interface {

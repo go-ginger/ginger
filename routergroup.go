@@ -2,7 +2,7 @@ package ginger
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/kulichak/helpers"
+	"github.com/go-ginger/helpers"
 )
 
 type RouterGroup struct {
