@@ -68,14 +68,13 @@ func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 	sample.SetBaseRequest(request)
 	request = sample.GetBaseRequest()
 	if helpers.Contains(methodsWithBody, ctx.Request.Method) {
-		if c.LogicHandler != nil {
-			c.LogicHandler.Model(sample)
-			sample.SetBody(request.Model)
+		if c.DbHandler != nil {
+			model := c.DbHandler.GetModelInstance()
+			sample.SetBody(model.(models.IBaseModel))
 			err := BindJSON(ctx, request.Body)
 			if err != nil {
 				return request, errors.New("Invalid request information. error: " + err.Error())
 			}
-			c.LogicHandler.Model(sample)
 		}
 	}
 	return sample, nil

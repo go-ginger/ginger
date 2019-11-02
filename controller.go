@@ -43,6 +43,7 @@ type BaseController struct {
 	Controller   IController
 	Routes       []BaseControllerRoute
 	LogicHandler logic.IBaseLogicHandler
+	DbHandler    dl.IBaseDbHandler
 }
 
 func (c *BaseController) Init(controller IController, logicHandler logic.IBaseLogicHandler, dbHandler dl.IBaseDbHandler) {
@@ -50,6 +51,9 @@ func (c *BaseController) Init(controller IController, logicHandler logic.IBaseLo
 	c.LogicHandler = logicHandler
 	if c.LogicHandler != nil {
 		c.LogicHandler.Init(logicHandler, dbHandler)
+	}
+	if dbHandler != nil {
+		c.DbHandler = dbHandler
 	}
 }
 
