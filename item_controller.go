@@ -18,6 +18,10 @@ type BaseItemController struct {
 	Controller IBaseItemController
 }
 
+func (c *BaseItemController) GetRequestSample() models.IRequest {
+	return &models.Request{}
+}
+
 func (c *BaseItemController) GetHandler(group *RouterGroup, routeHandler RouteHandler) gin.HandlerFunc {
 	return c.BaseController.GetHandler(group, routeHandler)
 }
