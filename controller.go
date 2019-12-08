@@ -15,10 +15,12 @@ type IController interface {
 
 	GetHandler(group *RouterGroup, routeHandler RouteHandler) gin.HandlerFunc
 
+	any(request models.IRequest) (result interface{})
 	post(request models.IRequest) (result interface{})
 	get(request models.IRequest) (result interface{})
 	put(request models.IRequest) (result interface{})
 
+	Any(request models.IRequest) (result interface{})
 	Post(request models.IRequest) (result interface{})
 	Get(request models.IRequest) (result interface{})
 	Put(request models.IRequest) (result interface{})
@@ -206,6 +208,10 @@ func (c *BaseController) handleFields(request models.IRequest) {
 		req.Fields = &f
 	}
 	context.Set("fields", f)
+}
+
+func (c *BaseController) any(request models.IRequest) (result interface{}) {
+	return
 }
 
 func (c *BaseController) post(request models.IRequest) (result interface{}) {

@@ -3,12 +3,14 @@ package ginger
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-ginger/helpers"
+	"strings"
 )
 
 type RouterGroup struct {
 	*gin.RouterGroup
 
-	engine *gin.Engine
+	engine         *gin.Engine
+	beforeRequests []HandlerFunc
 }
 
 func (group *RouterGroup) Group(relativePath string) *RouterGroup {
@@ -17,12 +19,27 @@ func (group *RouterGroup) Group(relativePath string) *RouterGroup {
 	}
 }
 
+func (group *RouterGroup) Any(handler HandlerFunc) (result interface{}) {
+	if group.beforeRequests == nil {
+		group.beforeRequests = make([]HandlerFunc, 0)
+	}
+	group.beforeRequests = append(group.beforeRequests, handler)
+	return
+}
+
 func (group *RouterGroup) RegisterRoutes(controller IController, path string, router *gin.RouterGroup) {
 	routes := controller.GetRoutes()
 	routesMap := map[string]HandlerFunc{
-		"Get":  controller.get,
-		"Post": controller.post,
-		"Put":  controller.put,
+		"any":  controller.any,
+		"get":  controller.get,
+		"post": controller.post,
+		"put":  controller.put,
+	}
+	methodHandlerNameMap := map[string]string{
+		"any":  "Any",
+		"get":  "Get",
+		"post": "Post",
+		"put":  "Put",
 	}
 	if config.CorsEnabled {
 		router.OPTIONS(path, CORS)
@@ -33,14 +50,24 @@ func (group *RouterGroup) RegisterRoutes(controller IController, path string, ro
 		CallBack: nil,
 	})
 	for _, route := range routes {
-		if handler, ok := routesMap[route.Method]; ok {
-			f := helpers.ReflectMethod(controller, route.Method)
+		method := strings.ToLower(route.Method)
+		if handler, ok := routesMap[method]; ok {
+			methodName := methodHandlerNameMap[method]
+			f := helpers.ReflectMethod(controller, methodName)
 			if f != nil {
 				var handlers []gin.HandlerFunc
 				if config.CorsEnabled {
 					handlers = append(handlers, CORS)
 				}
 				handlers = append(handlers, baseHandler)
+				if group.beforeRequests != nil {
+					for _, handler := range group.beforeRequests {
+						handlers = append(handlers, controller.GetHandler(group, RouteHandler{
+							Handler:  handler,
+							CallBack: nil,
+						}))
+					}
+				}
 				for _, handler := range route.Handlers {
 					handlers = append(handlers, controller.GetHandler(group, handler))
 				}
@@ -48,14 +75,17 @@ func (group *RouterGroup) RegisterRoutes(controller IController, path string, ro
 					Handler:  handler,
 					CallBack: nil,
 				}))
-				switch route.Method {
-				case "Get":
+				switch method {
+				case "any":
+					router.Any(path, handlers...)
+					break
+				case "get":
 					router.GET(path, handlers...)
 					break
-				case "Post":
+				case "post":
 					router.POST(path, handlers...)
 					break
-				case "Put":
+				case "put":
 					router.PUT(path, handlers...)
 					break
 				}

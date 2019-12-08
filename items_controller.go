@@ -33,6 +33,17 @@ func (c *BaseItemsController) RegisterRoutes(controller IBaseItemsController, pa
 	router.RegisterRoutes(controller, path, router.RouterGroup)
 }
 
+// Any
+func (c *BaseItemsController) Any(request models.IRequest) (result interface{}) {
+	return
+}
+
+func (c *BaseItemsController) any(request models.IRequest) (result interface{}) {
+	c.BaseController.any(request)
+	result = c.Controller.Any(request)
+	return
+}
+
 // POST
 func (c *BaseItemsController) Post(request models.IRequest) (result interface{}) {
 	result, err := c.LogicHandler.DoCreate(request)
