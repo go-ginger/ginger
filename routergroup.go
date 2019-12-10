@@ -30,16 +30,18 @@ func (group *RouterGroup) Any(handler HandlerFunc) (result interface{}) {
 func (group *RouterGroup) RegisterRoutes(controller IController, path string, router *gin.RouterGroup) {
 	routes := controller.GetRoutes()
 	routesMap := map[string]HandlerFunc{
-		"any":  controller.any,
-		"get":  controller.get,
-		"post": controller.post,
-		"put":  controller.put,
+		"any":    controller.any,
+		"get":    controller.get,
+		"post":   controller.post,
+		"put":    controller.put,
+		"delete": controller.delete,
 	}
 	methodHandlerNameMap := map[string]string{
-		"any":  "Any",
-		"get":  "Get",
-		"post": "Post",
-		"put":  "Put",
+		"any":    "Any",
+		"post":   "Post",
+		"get":    "Get",
+		"put":    "Put",
+		"delete": "Delete",
 	}
 	if config.CorsEnabled {
 		router.OPTIONS(path, CORS)
@@ -79,14 +81,17 @@ func (group *RouterGroup) RegisterRoutes(controller IController, path string, ro
 				case "any":
 					router.Any(path, handlers...)
 					break
-				case "get":
-					router.GET(path, handlers...)
-					break
 				case "post":
 					router.POST(path, handlers...)
 					break
+				case "get":
+					router.GET(path, handlers...)
+					break
 				case "put":
 					router.PUT(path, handlers...)
+					break
+				case "delete":
+					router.DELETE(path, handlers...)
 					break
 				}
 			}

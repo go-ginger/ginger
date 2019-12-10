@@ -19,6 +19,7 @@ type IController interface {
 	post(request models.IRequest) (result interface{})
 	get(request models.IRequest) (result interface{})
 	put(request models.IRequest) (result interface{})
+	delete(request models.IRequest) (result interface{})
 
 	Any(request models.IRequest) (result interface{})
 	Post(request models.IRequest) (result interface{})
@@ -225,5 +226,9 @@ func (c *BaseController) get(request models.IRequest) (result interface{}) {
 }
 
 func (c *BaseController) put(request models.IRequest) (result interface{}) {
+	return
+}
+
+func (c *BaseController) delete(request models.IRequest) (result interface{}) {
 	return
 }

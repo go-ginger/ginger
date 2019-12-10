@@ -95,3 +95,20 @@ func (c *BaseItemsController) put(request models.IRequest) (result interface{}) 
 	result = c.Controller.Put(request)
 	return
 }
+
+// DELETE
+func (c *BaseItemsController) Delete(request models.IRequest) (result interface{}) {
+	err := c.LogicHandler.DoDelete(request)
+	if c.HandleError(request, nil, err) {
+		return
+	}
+	req := request.GetBaseRequest()
+	req.Context.JSON(204, nil)
+	return
+}
+
+func (c *BaseItemsController) delete(request models.IRequest) (result interface{}) {
+	c.BaseController.delete(request)
+	result = c.Controller.Delete(request)
+	return
+}
