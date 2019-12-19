@@ -50,13 +50,19 @@ func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 	}
 	request := &models.Request{
 		Context: ctx,
-		Params:  &ctx.Params,
+		Params:  &models.Params{},
 		ID:      ctx.Params.ByName("id"),
 		Filters: &filters,
 		Sort:    &sort,
 		Fields:  &fields,
 		Page:    page,
 		PerPage: perPage,
+	}
+	for _, param := range ctx.Params {
+		request.Params.Set(&models.Param{
+			Key:   param.Key,
+			Value: param.Value,
+		})
 	}
 	if request.ID != "" {
 		if request.Filters == nil || *request.Filters == nil {
