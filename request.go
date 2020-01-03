@@ -1,18 +1,10 @@
 package ginger
 
 import (
-	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/go-ginger/helpers"
 	"github.com/go-ginger/models"
 	"strconv"
 )
-
-var methodsWithBody []string
-
-func init() {
-	methodsWithBody = []string{"POST", "PUT"}
-}
 
 func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 	filtersFace, exists := ctx.Get("filters")
@@ -73,13 +65,12 @@ func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 	sample := c.Controller.GetRequestSample()
 	sample.SetBaseRequest(request)
 	request = sample.GetBaseRequest()
-	if helpers.Contains(methodsWithBody, ctx.Request.Method) {
-		if c.DbHandler != nil {
-			model := c.DbHandler.GetModelInstance()
-			sample.SetBody(model.(models.IBaseModel))
-			err := BindJSON(ctx, request.Body)
-			if err != nil {
-				return request, errors.New("Invalid request information. error: " + err.Error())
+	if c.DbHandler != nil {
+		if ctx.Request.ContentLength > 0 {
+			model := c.DbHandler.GetModelInstance().(models.IBaseModel)
+			err := BindJSON(ctx, model)
+			if err == nil {
+				sample.SetBody(model)
 			}
 		}
 	}
