@@ -1,6 +1,7 @@
 package ginger
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-ginger/models"
 	"strconv"
@@ -69,7 +70,11 @@ func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 		if ctx.Request.ContentLength > 0 {
 			model := c.DbHandler.GetModelInstance().(models.IBaseModel)
 			err := BindJSON(ctx, model)
-			if err == nil {
+			if err != nil {
+				if c.ValidateRequestBody != nil && *c.ValidateRequestBody {
+					return request, errors.New("Invalid request information. error: " + err.Error())
+				}
+			} else {
 				sample.SetBody(model)
 			}
 		}

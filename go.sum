@@ -6,11 +6,12 @@ github.com/gin-contrib/sse v0.1.0/go.mod h1:RHrZQHXnP2xjPF+u1gW/2HnVO7nvIa9PG3Gm
 github.com/gin-gonic/gin v1.4.0/go.mod h1:OW2EZn3DO8Ln9oIKOvM++LBO+5UPHJJDH72/q/3rZdM=
 github.com/gin-gonic/gin v1.5.0 h1:fi+bqFAx/oLK54somfCtEZs9HeH1LHVoEPUgARpTqyc=
 github.com/gin-gonic/gin v1.5.0/go.mod h1:Nd6IXA8m5kNZdNEHMBd93KT+mdY3+bewLgRvmCsR2Do=
-github.com/go-ginger/dl v0.0.0 h1:Ge7f1lQGZTdF65NlVvMRW3uJlVLWSz8Zw5A1/UHlfiQ=
 github.com/go-ginger/dl v0.0.0/go.mod h1:4J46NychgC3h8+kwQB5D45/WnqOTgC/BC2fcfJHwXAo=
+github.com/go-ginger/dl v0.0.3 h1:nHuQ3rBFPnIKTaBoQlb9at/Xsh9faWfA+T+4WusQCew=
+github.com/go-ginger/dl v0.0.3/go.mod h1:4J46NychgC3h8+kwQB5D45/WnqOTgC/BC2fcfJHwXAo=
 github.com/go-ginger/helpers v0.0.0 h1:FnKs/BEuOyobnI9wAb/26TRG1hLW/e9fY1KtG6UMiP4=
 github.com/go-ginger/helpers v0.0.0/go.mod h1:Gsu1X7KIpaCt3Pj7sVoAFulEWwUQiwecyhQgdhhwCmc=
-github.com/go-ginger/logic v0.0.0 h1:++ldvwNoJDg37t5vwdcReqJPjPQWTrhl4MjdWRiZHEM=
+github.com/go-ginger/logic v0.0.0 h1:xpbUBwMni1mxfB3fBgntU5sl/jiwtCO0okNgHfzhZYM=
 github.com/go-ginger/logic v0.0.0/go.mod h1:qJkn/cGSEEZV9E/jEt5F4afAKyCjLUn+tDs5Ex0IBwU=
 github.com/go-ginger/models v0.0.0 h1:3M+xyJxNtqFUNxGcP1+VAv0vysXawvyf267nogScotY=
 github.com/go-ginger/models v0.0.0/go.mod h1:I1EqNLmqnooeA0m76xGWAYRaYZze3LaI/u92/sigb4g=

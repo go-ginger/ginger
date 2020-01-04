@@ -4,7 +4,7 @@ go 1.12
 
 require (
 	github.com/gin-gonic/gin v1.5.0
-	github.com/go-ginger/dl v0.0.0
+	github.com/go-ginger/dl v0.0.3
 	github.com/go-ginger/helpers v0.0.0
 	github.com/go-ginger/logic v0.0.0
 	github.com/go-ginger/models v0.0.0

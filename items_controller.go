@@ -99,7 +99,7 @@ func (c *BaseItemsController) put(request models.IRequest) (result interface{}) 
 // DELETE
 func (c *BaseItemsController) Delete(request models.IRequest) (result interface{}) {
 	err := c.LogicHandler.DoDelete(request)
-	if c.HandleError(request, nil, err) {
+	if c.HandleErrorNoResult(request, err) {
 		return
 	}
 	req := request.GetBaseRequest()

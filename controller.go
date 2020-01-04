@@ -43,10 +43,11 @@ type BaseControllerRoute struct {
 type BaseController struct {
 	IController
 
-	Controller   IController
-	Routes       []BaseControllerRoute
-	LogicHandler logic.IBaseLogicHandler
-	DbHandler    dl.IBaseDbHandler
+	ValidateRequestBody *bool
+	Controller          IController
+	Routes              []BaseControllerRoute
+	LogicHandler        logic.IBaseLogicHandler
+	DbHandler           dl.IBaseDbHandler
 }
 
 func (c *BaseController) Init(controller IController, logicHandler logic.IBaseLogicHandler, dbHandler dl.IBaseDbHandler) {
@@ -57,6 +58,10 @@ func (c *BaseController) Init(controller IController, logicHandler logic.IBaseLo
 	}
 	if dbHandler != nil {
 		c.DbHandler = dbHandler
+	}
+	if c.ValidateRequestBody == nil {
+		validate := true
+		c.ValidateRequestBody = &validate
 	}
 }
 
