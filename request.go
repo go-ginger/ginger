@@ -7,6 +7,24 @@ import (
 	"strconv"
 )
 
+func (c *BaseController) handleRequestBody(ctx *gin.Context, request models.IRequest) (err error) {
+	if c.DbHandler != nil {
+		if ctx.Request.ContentLength > 0 {
+			model := c.DbHandler.GetModelInstance().(models.IBaseModel)
+			err = BindJSON(ctx, model)
+			if err != nil {
+				if c.ValidateRequestBody != nil && *c.ValidateRequestBody {
+					err = errors.New("Invalid request information. error: " + err.Error())
+					return
+				}
+			} else {
+				request.SetBody(model)
+			}
+		}
+	}
+	return
+}
+
 func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 	filtersFace, exists := ctx.Get("filters")
 	var filters models.Filters
@@ -65,19 +83,10 @@ func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 	}
 	sample := c.Controller.GetRequestSample()
 	sample.SetBaseRequest(request)
-	request = sample.GetBaseRequest()
-	if c.DbHandler != nil {
-		if ctx.Request.ContentLength > 0 {
-			model := c.DbHandler.GetModelInstance().(models.IBaseModel)
-			err := BindJSON(ctx, model)
-			if err != nil {
-				if c.ValidateRequestBody != nil && *c.ValidateRequestBody {
-					return request, errors.New("Invalid request information. error: " + err.Error())
-				}
-			} else {
-				sample.SetBody(model)
-			}
-		}
+	err := c.handleRequestBody(ctx, sample)
+	if err != nil {
+		return nil, err
 	}
+	request = sample.GetBaseRequest()
 	return sample, nil
 }
