@@ -196,14 +196,28 @@ func (c *BaseController) handlePagination(request models.IRequest) {
 		req.Sort = &v
 	}
 
+	var page uint64
 	if q, ok := context.GetQuery("page"); ok {
-		page, _ := strconv.ParseUint(q, 10, 32)
-		req.Page = page
+		page, _ = strconv.ParseUint(q, 10, 32)
 	}
+	if page <= 0 {
+		page = 1
+	}
+	req.Page = page
+
+	var perPage uint64
 	if q, ok := context.GetQuery("per_page"); ok {
-		perPage, _ := strconv.ParseUint(q, 10, 32)
-		req.PerPage = perPage
+		perPage, _ = strconv.ParseUint(q, 10, 32)
+		if perPage <= 0 {
+			perPage = 0
+		}
+	} else {
+		perPage = 30
 	}
+	if perPage < 0 {
+		perPage = 30
+	}
+	req.PerPage = perPage
 }
 
 func (c *BaseController) handleFields(request models.IRequest) {

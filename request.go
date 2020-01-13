@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-ginger/models"
-	"strconv"
 )
 
 func (c *BaseController) handleRequestBody(ctx *gin.Context, request models.IRequest) (err error) {
@@ -43,22 +42,6 @@ func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 	if exists {
 		fields = fieldsFace.([]string)
 	}
-	pageFace, exists := ctx.Get("page")
-	var page uint64
-	if exists {
-		page, _ = strconv.ParseUint(pageFace.(string), 10, 32)
-	}
-	if page <= 0 {
-		page = 1
-	}
-	perPageFace, exists := ctx.Get("per_page")
-	var perPage uint64
-	if exists {
-		perPage, _ = strconv.ParseUint(perPageFace.(string), 10, 32)
-	}
-	if perPage <= 0 {
-		perPage = 30
-	}
 	request := &models.Request{
 		Context: ctx,
 		Params:  &models.Params{},
@@ -66,8 +49,6 @@ func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 		Filters: &filters,
 		Sort:    &sort,
 		Fields:  &fields,
-		Page:    page,
-		PerPage: perPage,
 	}
 	for _, param := range ctx.Params {
 		request.Params.Set(&models.Param{
@@ -85,7 +66,7 @@ func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 	sample.SetBaseRequest(request)
 	err := c.handleRequestBody(ctx, sample)
 	if err != nil {
-		return nil, err
+		return sample, err
 	}
 	request = sample.GetBaseRequest()
 	return sample, nil
