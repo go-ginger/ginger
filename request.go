@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-ginger/models"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 func (c *BaseController) handleRequestBody(ctx *gin.Context, request models.IRequest) (err error) {
@@ -13,7 +14,15 @@ func (c *BaseController) handleRequestBody(ctx *gin.Context, request models.IReq
 			err = BindJSON(ctx, model)
 			if err != nil {
 				if c.ValidateRequestBody != nil && *c.ValidateRequestBody {
-					err = errors.New("Invalid request information. error: " + err.Error())
+					err = errors.New(request.MustLocalize(&i18n.LocalizeConfig{
+						DefaultMessage: &i18n.Message{
+							ID:    "InvalidRequestInformation",
+							Other: "Invalid request information. error: {{.Error}}",
+						},
+						TemplateData: map[string]string{
+							"Error": err.Error(),
+						},
+					}))
 					return
 				}
 			} else {
@@ -61,6 +70,11 @@ func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 			request.Filters = &models.Filters{}
 		}
 		(*request.Filters)["id"] = request.ID
+	}
+	acceptLanguage := ctx.GetHeader("Accept-Language")
+	request.CurrentLanguage = &models.Language{
+		AcceptLanguage: acceptLanguage,
+		Localizer:      i18n.NewLocalizer(config.LanguageBundle, acceptLanguage),
 	}
 	sample := c.Controller.GetRequestSample()
 	sample.SetBaseRequest(request)
