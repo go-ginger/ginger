@@ -50,8 +50,8 @@ func (c *BaseItemsController) Post(request models.IRequest) (result interface{})
 	if c.HandleError(request, result, err) {
 		return
 	}
-	req := request.GetBaseRequest()
-	req.Context.JSON(201, result)
+	c.BeforeDump(request, result)
+	request.GetContext().JSON(201, result)
 	return
 }
 
@@ -67,8 +67,8 @@ func (c *BaseItemsController) Get(request models.IRequest) (result interface{}) 
 	if c.HandleError(request, result, err) {
 		return
 	}
-	req := request.GetBaseRequest()
-	req.Context.JSON(200, result)
+	c.BeforeDump(request, result)
+	request.GetContext().JSON(200, result)
 	return
 }
 
@@ -86,7 +86,7 @@ func (c *BaseItemsController) Put(request models.IRequest) (result interface{}) 
 		return
 	}
 	req := request.GetBaseRequest()
-	req.Context.JSON(204, nil)
+	req.Context.Status(204)
 	return
 }
 
@@ -103,7 +103,7 @@ func (c *BaseItemsController) Delete(request models.IRequest) (result interface{
 		return
 	}
 	req := request.GetBaseRequest()
-	req.Context.JSON(204, nil)
+	req.Context.Status(204)
 	return
 }
 
