@@ -132,12 +132,15 @@ func (c *BaseController) BeforeDump(request gm.IRequest, data interface{}) {
 				}
 			}
 		}
-		mv := s.Addr().Interface()
-		if baseModel, ok := mv.(gm.IBaseModel); ok {
-			baseModel.Populate(request)
-		}
-		if cls, ok := mv.(iBeforeDump); ok {
-			cls.BeforeDump(request, mv)
+		addr := s.Addr()
+		if addr.IsValid() && addr.CanInterface() {
+			mv := addr.Interface()
+			if baseModel, ok := mv.(gm.IBaseModel); ok {
+				baseModel.Populate(request)
+			}
+			if cls, ok := mv.(iBeforeDump); ok {
+				cls.BeforeDump(request, mv)
+			}
 		}
 		break
 	}
