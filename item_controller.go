@@ -18,6 +18,10 @@ type BaseItemController struct {
 	Controller IBaseItemController
 }
 
+func (c *BaseItemController) HandleRequestBody(ctx *gin.Context, request models.IRequest) (err error) {
+	return c.BaseController.handleRequestBody(ctx, request)
+}
+
 func (c *BaseItemController) GetRequestSample() models.IRequest {
 	return &models.Request{}
 }

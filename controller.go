@@ -26,6 +26,8 @@ type IController interface {
 	Get(request models.IRequest) (result interface{})
 	Put(request models.IRequest) (result interface{})
 	Delete(request models.IRequest) (result interface{})
+
+	HandleRequestBody(ctx *gin.Context, request models.IRequest) (err error)
 }
 
 type HandlerFunc func(request models.IRequest) (result interface{})

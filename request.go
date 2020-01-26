@@ -78,7 +78,7 @@ func (c *BaseController) NewRequest(ctx *gin.Context) (models.IRequest, error) {
 	}
 	sample := c.Controller.GetRequestSample()
 	sample.SetBaseRequest(request)
-	err := c.handleRequestBody(ctx, sample)
+	err := c.Controller.HandleRequestBody(ctx, sample)
 	if err != nil {
 		return sample, err
 	}
