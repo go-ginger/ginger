@@ -45,11 +45,15 @@ type BaseControllerRoute struct {
 type BaseController struct {
 	IController
 
-	ValidateRequestBody *bool
-	Controller          IController
-	Routes              []BaseControllerRoute
-	LogicHandler        logic.IBaseLogicHandler
-	DbHandler           dl.IBaseDbHandler
+	ValidateRequestBody          *bool
+	ValidateRequestBodyOnMethods []string
+	Controller                   IController
+	Routes                       []BaseControllerRoute
+	LogicHandler                 logic.IBaseLogicHandler
+	DbHandler                    dl.IBaseDbHandler
+	StrictValidation             bool
+
+	validateRequestBodyOnMethods map[string]bool
 }
 
 func (c *BaseController) Init(controller IController, logicHandler logic.IBaseLogicHandler, dbHandler dl.IBaseDbHandler) {
@@ -64,6 +68,16 @@ func (c *BaseController) Init(controller IController, logicHandler logic.IBaseLo
 	if c.ValidateRequestBody == nil {
 		validate := true
 		c.ValidateRequestBody = &validate
+	}
+	if c.ValidateRequestBodyOnMethods == nil {
+		c.ValidateRequestBodyOnMethods = []string{
+			"POST",
+			"PUT",
+		}
+	}
+	c.validateRequestBodyOnMethods = make(map[string]bool)
+	for _, method := range c.ValidateRequestBodyOnMethods {
+		c.validateRequestBodyOnMethods[method] = true
 	}
 }
 
@@ -134,8 +148,8 @@ func (c *BaseController) handleError(err error) (*int, error) {
 	if err != nil {
 		status := 400
 		message := err.Error()
-		if e, ok := err.(errors.Error); ok {
-			status = e.Status
+		if e, ok := err.(*errors.Error); ok {
+			return &status, e
 		}
 		if status == 0 {
 			status = 400
@@ -153,9 +167,7 @@ func (c *BaseController) HandleErrorNoResult(request models.IRequest, err error)
 		status, e := c.handleError(err)
 		if status != nil && e != nil {
 			req := request.GetBaseRequest()
-			req.Context.JSON(*status, errors.Error{
-				Message: e.Error(),
-			})
+			req.Context.JSON(*status, e)
 			return true
 		}
 	}
@@ -167,9 +179,7 @@ func (c *BaseController) HandleError(request models.IRequest, result interface{}
 	if err != nil {
 		status, e := c.handleError(err)
 		if status != nil && e != nil {
-			req.Context.JSON(*status, errors.Error{
-				Message: e.Error(),
-			})
+			req.Context.JSON(*status, e)
 			return true
 		}
 	} else if result == nil {

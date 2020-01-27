@@ -3,7 +3,9 @@ package ginger
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
+	"github.com/go-ginger/ginger/validate"
 	"github.com/go-ginger/models"
+	gme "github.com/go-ginger/models/errors"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
@@ -26,6 +28,16 @@ func (c *BaseController) handleRequestBody(ctx *gin.Context, request models.IReq
 					return
 				}
 			} else {
+				validationErrors, e := validate.Iterate(request, model, c.StrictValidation)
+				if e != nil {
+					err = e
+					if validationErrors != nil {
+						if currentErr, ok := err.(gme.IError); ok {
+							currentErr.SetErrors(validationErrors)
+						}
+					}
+					return
+				}
 				request.SetBody(model)
 			}
 		}
