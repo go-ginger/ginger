@@ -6,18 +6,6 @@ import (
 	"strings"
 )
 
-func addError(errors map[string]interface{}, name string, err error) {
-	var fieldErrors []string
-	if _, ok := errors[name]; !ok {
-		fieldErrors = make([]string, 0)
-		errors[name] = fieldErrors
-	} else {
-		fieldErrors = errors[name].([]string)
-	}
-	fieldErrors = append(fieldErrors, err.Error())
-	errors[name] = fieldErrors
-}
-
 func Iterate(request models.IRequest, data interface{}, strict bool) (errors map[string]interface{}, err error) {
 	s, ok := data.(reflect.Value)
 	if !ok {
@@ -39,7 +27,7 @@ func Iterate(request models.IRequest, data interface{}, strict bool) (errors map
 				if e != nil {
 					err = e
 					if nestedErrors != nil {
-						addError(errors, ff.Name, err)
+						errors[ff.Name] = err
 					}
 					return
 				}
@@ -49,7 +37,7 @@ func Iterate(request models.IRequest, data interface{}, strict bool) (errors map
 				if e != nil {
 					err = e
 					if nestedErrors != nil {
-						addError(errors, ff.Name, err)
+						errors[ff.Name] = err
 					}
 					return
 				}
@@ -60,7 +48,7 @@ func Iterate(request models.IRequest, data interface{}, strict bool) (errors map
 					if e != nil {
 						err = e
 						if nestedErrors != nil {
-							addError(errors, ff.Name, err)
+							errors[ff.Name] = err
 						}
 						return
 					}
@@ -74,8 +62,8 @@ func Iterate(request models.IRequest, data interface{}, strict bool) (errors map
 					if validator, ok := Validators[item]; ok {
 						err = validator.Handle(request, &ff, &f, nil)
 						if err != nil {
-							addError(errors, ff.Name, err)
-							return
+							errors[ff.Name] = err
+							break
 						}
 					}
 				}
