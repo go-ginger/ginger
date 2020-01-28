@@ -10,8 +10,8 @@ github.com/gin-gonic/gin v1.4.0/go.mod h1:OW2EZn3DO8Ln9oIKOvM++LBO+5UPHJJDH72/q/
 github.com/gin-gonic/gin v1.5.0 h1:fi+bqFAx/oLK54somfCtEZs9HeH1LHVoEPUgARpTqyc=
 github.com/gin-gonic/gin v1.5.0/go.mod h1:Nd6IXA8m5kNZdNEHMBd93KT+mdY3+bewLgRvmCsR2Do=
 github.com/go-ginger/dl v0.0.0/go.mod h1:4J46NychgC3h8+kwQB5D45/WnqOTgC/BC2fcfJHwXAo=
-github.com/go-ginger/dl v0.5.7 h1:kEX+5ScgN85BtB5yPiSWvpkaxHvMNahFwGqhFiswrzE=
-github.com/go-ginger/dl v0.5.7/go.mod h1:8DlUy4oZumtZVpxwM4Z2XgAv7p0Y4+BLWCVUqLZcAsQ=
+github.com/go-ginger/dl v0.5.8 h1:K5z8RJzDkhHakOnleFmHrnyI1OSUCiBy0TcQ70Q7/eg=
+github.com/go-ginger/dl v0.5.8/go.mod h1:8DlUy4oZumtZVpxwM4Z2XgAv7p0Y4+BLWCVUqLZcAsQ=
 github.com/go-ginger/helpers v0.0.0/go.mod h1:Gsu1X7KIpaCt3Pj7sVoAFulEWwUQiwecyhQgdhhwCmc=
 github.com/go-ginger/helpers v0.1.0 h1:46uHkfJ1KxP/ZaVXRNLOV2Os+J+N4VyG0iuTfLIx2bs=
 github.com/go-ginger/helpers v0.1.0/go.mod h1:Gsu1X7KIpaCt3Pj7sVoAFulEWwUQiwecyhQgdhhwCmc=

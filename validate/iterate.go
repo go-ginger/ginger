@@ -21,12 +21,39 @@ func setNestedErrors(request m.IRequest, errors, nestedErrors map[string]*me.Err
 	}
 }
 
+func handleValidation(request m.IRequest, structField *reflect.StructField, field *reflect.Value,
+	tagName string, errors map[string]*me.ErrorItem) (errorsResult map[string]*me.ErrorItem, handled bool) {
+	errorsResult = errors
+	if errorsResult == nil {
+		errorsResult = make(map[string]*me.ErrorItem)
+	}
+	validate, ok := structField.Tag.Lookup(tagName)
+	if ok {
+		items := strings.Split(validate, ",")
+		for _, item := range items {
+			parts := strings.Split(item, "=")
+			var tagValue *string
+			tagName := parts[0]
+			if len(parts) > 1 {
+				tagValue = &parts[1]
+			}
+			if validator, ok := Validators[tagName]; ok {
+				errItem := validator.Handle(request, structField, field, tagValue)
+				if errItem != nil {
+					errors[structField.Name] = errItem
+					break
+				}
+			}
+		}
+	}
+	return
+}
+
 func Iterate(request m.IRequest, data interface{}, strict bool) (errors map[string]*me.ErrorItem) {
 	s, ok := data.(reflect.Value)
 	if !ok {
 		s = reflect.ValueOf(data).Elem()
 	}
-	errors = make(map[string]*me.ErrorItem)
 	sType := s.Type()
 	switch s.Kind() {
 	case reflect.Struct:
@@ -61,17 +88,22 @@ func Iterate(request m.IRequest, data interface{}, strict bool) (errors map[stri
 				}
 				break
 			}
-			validate, ok := ff.Tag.Lookup("validation")
-			if ok {
-				items := strings.Split(validate, ",")
-				for _, item := range items {
-					if validator, ok := Validators[item]; ok {
-						errItem := validator.Handle(request, &ff, &f, nil)
-						if errItem != nil {
-							errors[ff.Name] = errItem
-							break
-						}
-					}
+			if errors, ok = handleValidation(request, &ff, &f, "validation", errors); ok {
+				break
+			}
+			ctx := request.GetContext()
+			validationKey := ""
+			switch ctx.Request.Method {
+			case "POST":
+				validationKey = "post_validation"
+				break
+			case "PUT":
+				validationKey = "put_validation"
+				break
+			}
+			if validationKey != "" {
+				if errors, ok = handleValidation(request, &ff, &f, validationKey, errors); ok {
+					break
 				}
 			}
 		}
