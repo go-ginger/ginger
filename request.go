@@ -28,13 +28,11 @@ func (c *BaseController) handleRequestBody(ctx *gin.Context, request models.IReq
 					return
 				}
 			} else {
-				validationErrors, e := validate.Iterate(request, model, c.StrictValidation)
-				if e != nil {
-					err = e
-					if validationErrors != nil {
-						if currentErr, ok := err.(gme.IError); ok {
-							currentErr.SetErrors(validationErrors)
-						}
+				validationErrors := validate.Iterate(request, model, c.StrictValidation)
+				if validationErrors != nil && len(validationErrors) > 0 {
+					err = gme.GetValidationError(request)
+					if currentErr, ok := err.(gme.IError); ok {
+						currentErr.SetErrors(validationErrors)
 					}
 					return
 				}

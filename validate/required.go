@@ -24,7 +24,7 @@ func (v *Required) GetKey() *string {
 }
 
 func (v *Required) Handle(request models.IRequest, field *reflect.StructField, value *reflect.Value,
-	tagValue *string) (err error) {
+	tagValue *string) (err *errors.ErrorItem) {
 	if field == nil || value == nil {
 		return
 	}
@@ -34,12 +34,21 @@ func (v *Required) Handle(request models.IRequest, field *reflect.StructField, v
 	kind := value.Kind()
 	if kind == reflect.Interface || kind == reflect.Ptr {
 		if value.IsNil() {
-			err = errors.GetValidationError(request, request.MustLocalize(&i18n.LocalizeConfig{
-				DefaultMessage: &i18n.Message{
-					ID:    "FieldRequired",
-					Other: "Missing data for required field.",
-				},
-			}))
+			err = &errors.ErrorItem{
+				Key: field.Name,
+				Title: request.MustLocalize(&i18n.LocalizeConfig{
+					DefaultMessage: &i18n.Message{
+						ID:    field.Name,
+						Other: field.Name,
+					},
+				}),
+				Message: request.MustLocalize(&i18n.LocalizeConfig{
+					DefaultMessage: &i18n.Message{
+						ID:    "FieldRequired",
+						Other: "Missing data for required field.",
+					},
+				}),
+			}
 		}
 	}
 	return
