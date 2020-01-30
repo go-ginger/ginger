@@ -73,10 +73,14 @@ type iBeforeDump interface {
 func (c *BaseController) BeforeDump(request gm.IRequest, data interface{}) {
 	s, ok := data.(reflect.Value)
 	if !ok {
-		s = reflect.ValueOf(data).Elem()
+		s = reflect.ValueOf(data)
+	}
+	kind := s.Kind()
+	if kind == reflect.Ptr {
+		s = s.Elem()
 	}
 	sType := s.Type()
-	switch s.Kind() {
+	switch kind {
 	case reflect.Struct:
 		for i := 0; i < s.NumField(); i++ {
 			f := s.Field(i)
@@ -132,14 +136,16 @@ func (c *BaseController) BeforeDump(request gm.IRequest, data interface{}) {
 				}
 			}
 		}
-		addr := s.Addr()
-		if addr.IsValid() && addr.CanInterface() {
-			mv := addr.Interface()
-			if baseModel, ok := mv.(gm.IBaseModel); ok {
-				baseModel.Populate(request)
-			}
-			if cls, ok := mv.(iBeforeDump); ok {
-				cls.BeforeDump(request, mv)
+		if s.CanAddr() {
+			addr := s.Addr()
+			if addr.IsValid() && addr.CanInterface() {
+				mv := addr.Interface()
+				if baseModel, ok := mv.(gm.IBaseModel); ok {
+					baseModel.Populate(request)
+				}
+				if cls, ok := mv.(iBeforeDump); ok {
+					cls.BeforeDump(request, mv)
+				}
 			}
 		}
 		break
