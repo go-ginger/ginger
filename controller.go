@@ -149,6 +149,9 @@ func (c *BaseController) handleError(err error) (*int, error) {
 		status := 400
 		message := err.Error()
 		if e, ok := err.(*errors.Error); ok {
+			if e.Status > 0 {
+				status = e.Status
+			}
 			return &status, e
 		}
 		if status == 0 {
