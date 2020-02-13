@@ -78,6 +78,7 @@ func (c *BaseController) BeforeDump(request gm.IRequest, data interface{}) {
 	kind := s.Kind()
 	if kind == reflect.Ptr {
 		s = s.Elem()
+		kind = s.Kind()
 	}
 	sType := s.Type()
 	switch kind {
