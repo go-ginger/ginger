@@ -82,6 +82,11 @@ func (c *BaseController) BeforeDump(request gm.IRequest, data interface{}) {
 	}
 	sType := s.Type()
 	switch kind {
+	case reflect.Slice:
+		for ind := 0; ind < s.Len(); ind++ {
+			c.BeforeDump(request, s.Index(ind))
+		}
+		break
 	case reflect.Struct:
 		for i := 0; i < s.NumField(); i++ {
 			f := s.Field(i)
@@ -95,6 +100,10 @@ func (c *BaseController) BeforeDump(request gm.IRequest, data interface{}) {
 					break
 				}
 				c.BeforeDump(request, f.Elem())
+				break
+			case reflect.Interface:
+				i := f.Interface()
+				c.BeforeDump(request, i)
 				break
 			case reflect.Struct:
 				c.BeforeDump(request, f)
