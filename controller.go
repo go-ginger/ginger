@@ -6,6 +6,7 @@ import (
 	"github.com/go-ginger/logic"
 	"github.com/go-ginger/models"
 	"github.com/go-ginger/models/errors"
+	"reflect"
 	"strconv"
 )
 
@@ -53,6 +54,9 @@ type BaseController struct {
 	DbHandler                    dl.IBaseDbHandler
 	StrictValidation             bool
 
+	Model     reflect.Value
+	ModelType reflect.Type
+
 	validateRequestBodyOnMethods map[string]bool
 }
 
@@ -78,6 +82,18 @@ func (c *BaseController) Init(controller IController, logicHandler logic.IBaseLo
 	c.validateRequestBodyOnMethods = make(map[string]bool)
 	for _, method := range c.ValidateRequestBodyOnMethods {
 		c.validateRequestBodyOnMethods[method] = true
+	}
+	if dbHandler != nil {
+		baseDb := dbHandler.GetBaseDbHandler().(*dl.BaseDbHandler)
+		c.Model = baseDb.Model
+		c.ModelType = baseDb.ModelType
+	}
+}
+
+func (c *BaseController) InitModel(model interface{}) {
+	if model != nil {
+		c.Model = reflect.ValueOf(model)
+		c.ModelType = c.Model.Type()
 	}
 }
 

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/go-ginger/ginger/validate"
+	h "github.com/go-ginger/helpers"
 	"github.com/go-ginger/models"
 	gme "github.com/go-ginger/models/errors"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -12,7 +13,7 @@ import (
 func (c *BaseController) handleRequestBody(ctx *gin.Context, request models.IRequest) (err error) {
 	if c.DbHandler != nil {
 		if ctx.Request.ContentLength > 0 {
-			model := c.DbHandler.GetModelInstance().(models.IBaseModel)
+			model := h.NewInstanceOfType(c.ModelType).(models.IBaseModel)
 			err = BindJSON(ctx, model)
 			if err != nil {
 				if c.ValidateRequestBody != nil && *c.ValidateRequestBody {
