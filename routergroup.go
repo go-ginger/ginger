@@ -98,3 +98,42 @@ func (group *RouterGroup) RegisterRoutes(controller IController, path string, ro
 		}
 	}
 }
+
+func (group *RouterGroup) RegisterRoute(controller IController, router *gin.RouterGroup, path, method string,
+	customHandlers ...HandlerFunc) {
+	routes := controller.GetRoutes()
+	if config.CorsEnabled {
+		router.OPTIONS(path, CORS)
+	}
+	baseHandler := controller.GetHandler(group, RouteHandler{
+		Type:     -1,
+		Handler:  nil,
+		CallBack: nil,
+	})
+	for _, route := range routes {
+		var handlers []gin.HandlerFunc
+		if config.CorsEnabled {
+			handlers = append(handlers, CORS)
+		}
+		handlers = append(handlers, baseHandler)
+		if group.beforeRequests != nil {
+			for _, handler := range group.beforeRequests {
+				handlers = append(handlers, controller.GetHandler(group, RouteHandler{
+					Handler:  handler,
+					CallBack: nil,
+				}))
+			}
+		}
+		for _, handler := range route.Handlers {
+			handlers = append(handlers, controller.GetHandler(group, handler))
+		}
+		for _, h := range customHandlers {
+			handlers = append(handlers, controller.GetHandler(group, RouteHandler{
+				Handler:  h,
+				CallBack: nil,
+			}))
+		}
+		method = strings.ToUpper(method)
+		router.Handle(method, path, handlers...)
+	}
+}

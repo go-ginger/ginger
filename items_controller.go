@@ -37,6 +37,12 @@ func (c *BaseItemsController) RegisterRoutes(controller IBaseItemsController, pa
 	router.RegisterRoutes(controller, path, router.RouterGroup)
 }
 
+func (c *BaseItemsController) RegisterRoute(controller IBaseItemController, router *RouterGroup, path, method string,
+	customHandlers ...HandlerFunc) {
+	c.Controller = controller
+	router.RegisterRoute(controller, router.RouterGroup, path, method, customHandlers...)
+}
+
 // Any
 func (c *BaseItemsController) Any(request models.IRequest) (result interface{}) {
 	return
