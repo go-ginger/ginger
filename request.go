@@ -11,34 +11,32 @@ import (
 )
 
 func (c *BaseController) handleRequestBody(ctx *gin.Context, request models.IRequest) (err error) {
-	if c.DbHandler != nil {
-		if ctx.Request.ContentLength > 0 {
-			model := h.NewInstanceOfType(c.ModelType).(models.IBaseModel)
-			err = BindJSON(ctx, model)
-			if err != nil {
-				if c.ValidateRequestBody != nil && *c.ValidateRequestBody {
-					err = errors.New(request.MustLocalize(&i18n.LocalizeConfig{
-						DefaultMessage: &i18n.Message{
-							ID:    "InvalidRequestInformation",
-							Other: "Invalid request information. error: {{.Error}}",
-						},
-						TemplateData: map[string]string{
-							"Error": err.Error(),
-						},
-					}))
-					return
-				}
-			} else {
-				validationErrors := validate.Iterate(request, model, c.StrictValidation)
-				if validationErrors != nil && len(validationErrors) > 0 {
-					err = gme.GetValidationError(request)
-					if currentErr, ok := err.(gme.IError); ok {
-						currentErr.SetErrors(validationErrors)
-					}
-					return
-				}
-				request.SetBody(model)
+	if ctx.Request.ContentLength > 0 {
+		model := h.NewInstanceOfType(c.ModelType).(models.IBaseModel)
+		err = BindJSON(ctx, model)
+		if err != nil {
+			if c.ValidateRequestBody != nil && *c.ValidateRequestBody {
+				err = errors.New(request.MustLocalize(&i18n.LocalizeConfig{
+					DefaultMessage: &i18n.Message{
+						ID:    "InvalidRequestInformation",
+						Other: "Invalid request information. error: {{.Error}}",
+					},
+					TemplateData: map[string]string{
+						"Error": err.Error(),
+					},
+				}))
+				return
 			}
+		} else {
+			validationErrors := validate.Iterate(request, model, c.StrictValidation)
+			if validationErrors != nil && len(validationErrors) > 0 {
+				err = gme.GetValidationError(request)
+				if currentErr, ok := err.(gme.IError); ok {
+					currentErr.SetErrors(validationErrors)
+				}
+				return
+			}
+			request.SetBody(model)
 		}
 	}
 	return
