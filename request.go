@@ -11,7 +11,7 @@ import (
 )
 
 func (c *BaseController) handleRequestBody(ctx *gin.Context, request models.IRequest) (err error) {
-	if ctx.Request.ContentLength > 0 {
+	if c.ModelType != nil && ctx.Request.ContentLength > 0 {
 		model := h.NewInstanceOfType(c.ModelType).(models.IBaseModel)
 		err = BindJSON(ctx, model)
 		if err != nil {
