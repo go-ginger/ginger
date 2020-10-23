@@ -11,6 +11,8 @@ import (
 )
 
 type IController interface {
+	AddRoute(method string, handlers ...HandlerFunc)
+	RegisterRoutes(controller IController, path string, router *RouterGroup)
 	GetRequestSample() models.IRequest
 	GetRoutes() []BaseControllerRoute
 
@@ -44,8 +46,6 @@ type BaseControllerRoute struct {
 }
 
 type BaseController struct {
-	IController
-
 	ValidateRequestBody          *bool
 	ValidateRequestBodyOnMethods []string
 	Controller                   IController

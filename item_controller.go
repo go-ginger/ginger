@@ -18,6 +18,10 @@ type BaseItemController struct {
 	Controller IBaseItemController
 }
 
+func (c *BaseItemController) AddRoute(method string, handlers ...HandlerFunc) {
+	c.BaseController.AddRoute(method, handlers...)
+}
+
 func (c *BaseItemController) HandleRequestBody(ctx *gin.Context, request models.IRequest) (err error) {
 	return c.BaseController.handleRequestBody(ctx, request)
 }
@@ -34,12 +38,12 @@ func (c *BaseItemController) GetRoutes() []BaseControllerRoute {
 	return c.Routes
 }
 
-func (c *BaseItemController) RegisterRoutes(controller IBaseItemController, path string, router *RouterGroup) {
+func (c *BaseItemController) RegisterRoutes(controller IController, path string, router *RouterGroup) {
 	c.Controller = controller
 	router.RegisterRoutes(controller, path, router.RouterGroup)
 }
 
-func (c *BaseItemController) RegisterRoute(controller IBaseItemController, router *RouterGroup, path, method string,
+func (c *BaseItemController) RegisterRoute(controller IController, router *RouterGroup, path, method string,
 	customHandlers ...HandlerFunc) {
 	c.Controller = controller
 	router.RegisterRoute(controller, router.RouterGroup, path, method, customHandlers...)
