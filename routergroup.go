@@ -14,8 +14,15 @@ type RouterGroup struct {
 }
 
 func (group *RouterGroup) Group(relativePath string) *RouterGroup {
+	var g *gin.RouterGroup
+	if group.RouterGroup != nil {
+		g = group.RouterGroup.Group(relativePath)
+	} else {
+		g = group.engine.Group(relativePath)
+	}
 	return &RouterGroup{
-		RouterGroup: group.engine.Group(relativePath),
+		RouterGroup: g,
+		engine:      group.engine,
 	}
 }
 
