@@ -10,5 +10,5 @@ require (
 	github.com/go-ginger/logic v0.3.0
 	github.com/go-ginger/models v0.3.13
 	github.com/nicksnyder/go-i18n/v2 v2.0.3
-	golang.org/x/text v0.3.2
+	golang.org/x/text v0.3.8
 )
